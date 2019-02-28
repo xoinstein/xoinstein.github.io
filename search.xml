@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+    <entry>
+      <title>PHP中tempnam函数dir参数不可访问却取系统tmp目录</title>
+      <url>/2018/05/07/tempnam/</url>
+      <content type="text">项目中需要将LaTex公式转为图片传给前端,实现方式是利用exec分别调用系统的latex/dvips/convert命令,最终生成png文件.
+
+...
+
+error_reporting(0); # not checking existence myself, that would be double.
+if (chdir(&quot;tmp&quot;)===FALSE) { return '[directory access error, fix permissions]'; } #I should chech whether file creation is allowed to give a nice error for that problem case
+error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE); # TODO: set old value
+
+$tfn = tempnam(getcwd(), 'PTX'); #file in tmp dir
+
+#write temporary .tex file
+if ( ($tex = fopen($tfn.'.tex', &quot;w&quot;))==FALSE) {
+    return '[file access error] '.phplatex_cleantmp($tfn,$heredir);
+}
+fwrite($tex, $totex); 
+fclose($tex);
+
+# Run latex to create a .dvi.  Have it try to fix minor errors instead of breaking/pausing on them.
+exec($path_to_latex.' --interaction=nonstopmode '.$tfn.'.tex');
+if (!file_exists($tfn.&quot;.dvi&quot;)) {
+    $log = file_get_contents($tfn.'.log'); #The log always exists, but now it's actually interesting since it'll contain an error
+    return '[latex error, code follows]&amp;lt;pre&amp;gt;'.$totex.'&amp;lt;/pre&amp;gt;&amp;lt;p&amp;gt;&amp;lt;b&amp;gt;Log file:&amp;lt;/b&amp;gt;&amp;lt;pre&amp;gt;'.$log.'&amp;lt;/pre&amp;gt;&amp;lt;/p&amp;gt; '.phplatex_cleantmp($tfn,$heredir);
+}
+
+...
+
+
+
+某次出问题,报错一直都是’[latex error, code follows…]’,即执行完latex命令转换tex的代码后检查dvi文件是否存在,打印出exec执行的代码,’/usr/bin/latex –interaction=nonstopmode /tmp/PTXBmQJee.tex’,上文有 chdir(“tmp”) 已经切换到当前目录下的tmp目录,而此tex却在/tmp下,打印发现getcwd()确实是当前目录的tmp,WTF,搜了下tempnam:
+
+
+  tempnam
+
+  Description
+    string tempnam ( string $dir , string $prefix )
+
+  Creates a file with a unique filename, with access permission set to 0600, in the specified directory. If the directory does not exist or is not writable, tempnam() may generate a file in the system’s temporary directory, and return the full path to that file, including its name.
+
+
+dir不存在或者不可写的时候会取系统的临时目录,而前面的chdir的判断并没有确保tmp可写.给tmp加写权限即解决问题.
+
+</content>
+      <categories>
+        
+      </categories>
+      <tags>
+        
+          <tag> blog </tag>
+        
+      </tags>
+      <tags></tags>
+    </entry>
+  
+    <entry>
+      <title>拟配台式电脑配置记录</title>
+      <url>/2018/04/27/computer/</url>
+      <content type="text">主板
+华擎 B360M Pro4  
+
+CPU
+i5 8400  
+CPU风扇 彩融B81  
+导热硅脂  ARCTIC  
+
+内存
+英睿达 8G  
+
+显卡
+蓝宝石 RX580  
+
+硬盘
+东芝 固态 240G  
+    机械 4TB  
+
+电源
+讯景 XTR550  
+
+
+机箱
+乔思伯 U4  
+
+显示器
+DELL P2718Q  
+
+
+
+其他
+路由器 华硕RT-AC1200  
+</content>
+      <categories>
+        
+      </categories>
+      <tags>
+        
+          <tag> blog </tag>
+        
+      </tags>
+      <tags></tags>
+    </entry>
+  
+    <entry>
+      <title>LNMP环境搭建(Ubuntu16.04.3+nginx+mysql5.7+php7.2)</title>
+      <url>/2018/02/20/lnmp/</url>
+      <content type="text">安装
+1.更新
+apt-get update
+
+
+2.安装nginx
+apt-get nginx
+
+
+3.安装mysql5.7
+apt-get -y mysql-server-5.7 mysql-client-5.7
+
+
+4.安装php7
+apt直接安装会报错，需添加仓库
+apt-get install -y software-properties-common
+add-apt-repository ppa:ondrej/php
+
+apt-get update
+apt-cache search php7.2
+apt-get install php7.2 php7.2-fpm ... php7.2-xml
+
+
+配置
+
+</content>
+      <categories>
+        
+      </categories>
+      <tags>
+        
+          <tag> blog </tag>
+        
+      </tags>
+      <tags></tags>
+    </entry>
+  
+    <entry>
+      <title>恢复云数据库MySQL的备份文件到自建数据库遇到的权限问题</title>
+      <url>/2017/12/11/mysql-trigger-privilege/</url>
+      <content type="text">恢复过程参考阿里的的这篇帮助文档 “恢复云数据库MySQL的备份文件到自建数据库”
+
+后来使用此自建数据库过程中遇到某几张表都出现如下报错
+
+The user specified as a definer ('user_xxx'@'') does not exist
+
+
+而此user根本不在自建数据库中，删User重新grant也无果，Google发现类似情况的是视图的权限问题，然后发现几张表共同点都是有trigger，查trigger的definer就是此user，重建trigger解决.
+</content>
+      <categories>
+        
+      </categories>
+      <tags>
+        
+          <tag> blog </tag>
+        
+      </tags>
+      <tags></tags>
+    </entry>
+  
+    <entry>
+      <title>Mac下brew安装MySQL后不知道密码，无法登陆</title>
+      <url>/2017/09/07/mac-mysql-pwd/</url>
+      <content type="text">
+  关闭Mysql服务
+      $ brew services stop mysql
+    
+  
+  开启服务(跳过验证)
+      $ mysqld_safe --skip-grant-tables
+    
+  
+  无密码登录
+      $ mysql -uroot -p
+    
+  
+  
+    设置密码
+
+      UPDATE mysql.user SET authentication_string=PASSWORD('112358') WHERE User='root';
+  FLUSH PRIVILEGES;
+    
+  
+  开启MySQL服务，即可用新密码登录
+      $ brew services start mysql
+  $ mysql -uroot -p112358
+    
+  
+
+
+</content>
+      <categories>
+        
+      </categories>
+      <tags>
+        
+          <tag> blog </tag>
+        
+      </tags>
+      <tags></tags>
+    </entry>
+  
+    <entry>
+      <title>ssh免密登录</title>
+      <url>/2017/08/24/ssh-by-key/</url>
+      <content type="text">1) mkdir -p ~/.ssh/ecs
+
+2) ssh-keygen -t rsa -b 4096 -C “xoinstein.com” -f ~/.ssh/ecs/xoinstein.com
+
+3) ssh-copy-id -i ~/.ssh/ecs/xoinstein.com -p 22 root@xoinstein.com
+
+4) ssh-add -K ~/.ssh/ecs/xoinstein.com
+
+5) vi ~/.ssh/config 添加以下代码：
+
+ Host xoinstein.com
+
+    AddKeysToAgent yes
+
+    UseKeychain yes
+
+    IdentityFile ~/.ssh/ecs/xoinstein.com
+
+6) alias ssh-xo=’ssh -p 22 root@xoinstein.com’ 添加到~/.bashrc 或 ~/.profile
+
+7) ssh-xo登陆服务器
+</content>
+      <categories>
+        
+      </categories>
+      <tags>
+        
+          <tag> blog </tag>
+        
+      </tags>
+      <tags></tags>
+    </entry>
+  
+</search>

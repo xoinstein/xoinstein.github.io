@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.4">Jekyll</generator><link href="/atom.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2019-02-28T16:44:39+08:00</updated><id>/atom.xml</id><title type="html">Xoinstein</title><subtitle>🐒</subtitle><author><name>xoinstein</name></author><entry><title type="html">PHP中tempnam函数dir参数不可访问却取系统tmp目录</title><link href="/2018/05/07/tempnam/" rel="alternate" type="text/html" title="PHP中tempnam函数dir参数不可访问却取系统tmp目录" /><published>2018-05-07T00:00:00+08:00</published><updated>2018-05-07T00:00:00+08:00</updated><id>/2018/05/07/tempnam</id><content type="html" xml:base="/2018/05/07/tempnam/">&lt;p&gt;项目中需要将LaTex公式转为图片传给前端,实现方式是利用exec分别调用系统的latex/dvips/convert命令,最终生成png文件.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-PHP&quot;&gt;...
+
+error_reporting(0); # not checking existence myself, that would be double.
+if (chdir(&quot;tmp&quot;)===FALSE) { return '[directory access error, fix permissions]'; } #I should chech whether file creation is allowed to give a nice error for that problem case
+error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE); # TODO: set old value
+
+$tfn = tempnam(getcwd(), 'PTX'); #file in tmp dir
+
+#write temporary .tex file
+if ( ($tex = fopen($tfn.'.tex', &quot;w&quot;))==FALSE) {
+    return '[file access error] '.phplatex_cleantmp($tfn,$heredir);
+}
+fwrite($tex, $totex); 
+fclose($tex);
+
+# Run latex to create a .dvi.  Have it try to fix minor errors instead of breaking/pausing on them.
+exec($path_to_latex.' --interaction=nonstopmode '.$tfn.'.tex');
+if (!file_exists($tfn.&quot;.dvi&quot;)) {
+    $log = file_get_contents($tfn.'.log'); #The log always exists, but now it's actually interesting since it'll contain an error
+    return '[latex error, code follows]&amp;lt;pre&amp;gt;'.$totex.'&amp;lt;/pre&amp;gt;&amp;lt;p&amp;gt;&amp;lt;b&amp;gt;Log file:&amp;lt;/b&amp;gt;&amp;lt;pre&amp;gt;'.$log.'&amp;lt;/pre&amp;gt;&amp;lt;/p&amp;gt; '.phplatex_cleantmp($tfn,$heredir);
+}
+
+...
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;某次出问题,报错一直都是’[latex error, code follows…]’,即执行完latex命令转换tex的代码后检查dvi文件是否存在,打印出exec执行的代码,’/usr/bin/latex –interaction=nonstopmode /tmp/PTXBmQJee.tex’,上文有 chdir(“tmp”) 已经切换到当前目录下的tmp目录,而此tex却在/tmp下,打印发现getcwd()确实是当前目录的tmp,WTF,搜了下tempnam:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;tempnam&lt;/p&gt;
+
+  &lt;p&gt;Description
+    string tempnam ( string $dir , string $prefix )&lt;/p&gt;
+
+  &lt;p&gt;Creates a file with a unique filename, with access permission set to 0600, in the specified directory. If the directory does not exist or is not writable, tempnam() may generate a file in the system’s temporary directory, and return the full path to that file, including its name.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;dir不存在或者不可写的时候会取系统的临时目录,而前面的chdir的判断并没有确保tmp可写.给tmp加写权限即解决问题.&lt;/p&gt;</content><author><name>xoinstein</name></author><category term="blog" /></entry><entry><title type="html">拟配台式电脑配置记录</title><link href="/2018/04/27/computer/" rel="alternate" type="text/html" title="拟配台式电脑配置记录" /><published>2018-04-27T00:00:00+08:00</published><updated>2018-04-27T00:00:00+08:00</updated><id>/2018/04/27/computer</id><content type="html" xml:base="/2018/04/27/computer/">&lt;h2 id=&quot;主板&quot;&gt;主板&lt;/h2&gt;
+&lt;p&gt;华擎 B360M Pro4  &lt;!-- ¥649 --&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;cpu&quot;&gt;CPU&lt;/h2&gt;
+&lt;p&gt;i5 8400  &lt;!-- ¥1024 --&gt;&lt;br /&gt;
+CPU风扇 彩融B81  &lt;!-- ¥209 --&gt;&lt;br /&gt;
+导热硅脂  ARCTIC  &lt;!-- ¥29.9 --&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;内存&quot;&gt;内存&lt;/h2&gt;
+&lt;p&gt;英睿达 8G  &lt;!-- ¥579 --&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;显卡&quot;&gt;显卡&lt;/h2&gt;
+&lt;p&gt;蓝宝石 RX580  &lt;!-- ¥2499 --&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;硬盘&quot;&gt;硬盘&lt;/h2&gt;
+&lt;p&gt;东芝 固态 240G  &lt;!-- ¥499(原有 -¥499) --&gt;&lt;br /&gt;
+    机械 4TB  &lt;!-- ¥699 --&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;电源&quot;&gt;电源&lt;/h2&gt;
+&lt;p&gt;讯景 XTR550  &lt;!-- ¥579(二手 -¥290) --&gt;&lt;br /&gt;
+&lt;!-- 电源线 ¥18.9 --&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;机箱&quot;&gt;机箱&lt;/h2&gt;
+&lt;p&gt;乔思伯 U4  &lt;!-- ¥299 --&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;显示器&quot;&gt;显示器&lt;/h2&gt;
+&lt;p&gt;DELL P2718Q  &lt;!-- ¥3999 --&gt;&lt;/p&gt;
+
+&lt;!-- 总计 ¥11084 - ¥789 = ¥ 10295 --&gt;
+
+&lt;h2 id=&quot;其他&quot;&gt;其他&lt;/h2&gt;
+&lt;p&gt;路由器 华硕RT-AC1200  &lt;!-- ¥199 --&gt;&lt;/p&gt;</content><author><name>xoinstein</name></author><category term="blog" /></entry><entry><title type="html">LNMP环境搭建(Ubuntu16.04.3+nginx+mysql5.7+php7.2)</title><link href="/2018/02/20/lnmp/" rel="alternate" type="text/html" title="LNMP环境搭建(Ubuntu16.04.3+nginx+mysql5.7+php7.2)" /><published>2018-02-20T00:00:00+08:00</published><updated>2018-02-20T00:00:00+08:00</updated><id>/2018/02/20/lnmp</id><content type="html" xml:base="/2018/02/20/lnmp/">&lt;h2 id=&quot;安装&quot;&gt;安装&lt;/h2&gt;
+&lt;p&gt;1.更新&lt;/p&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get update
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;2.安装nginx&lt;/p&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;3.安装mysql5.7&lt;/p&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt; mysql-server-5.7 mysql-client-5.7
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;4.安装php7
+apt直接安装会报错，需添加仓库&lt;/p&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get install &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt; software-properties-common
+add-apt-repository ppa:ondrej/php
+
+apt-get update
+apt-cache search php7.2
+apt-get install php7.2 php7.2-fpm ... php7.2-xml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;配置&quot;&gt;配置&lt;/h2&gt;</content><author><name>xoinstein</name></author><category term="blog" /></entry><entry><title type="html">恢复云数据库MySQL的备份文件到自建数据库遇到的权限问题</title><link href="/2017/12/11/mysql-trigger-privilege/" rel="alternate" type="text/html" title="恢复云数据库MySQL的备份文件到自建数据库遇到的权限问题" /><published>2017-12-11T00:00:00+08:00</published><updated>2017-12-11T00:00:00+08:00</updated><id>/2017/12/11/mysql-trigger-privilege</id><content type="html" xml:base="/2017/12/11/mysql-trigger-privilege/">&lt;p&gt;恢复过程参考阿里的的这篇帮助文档 “&lt;a href=&quot;https://help.aliyun.com/knowledge_detail/41817.html&quot;&gt;恢复云数据库MySQL的备份文件到自建数据库&lt;/a&gt;”&lt;/p&gt;
+
+&lt;p&gt;后来使用此自建数据库过程中遇到某几张表都出现如下报错&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-mysql&quot;&gt;The user specified as a definer ('user_xxx'@'') does not exist
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;而此user根本不在自建数据库中，删User重新grant也无果，Google发现类似情况的是视图的权限问题，然后发现几张表共同点都是有trigger，查trigger的definer就是此user，重建trigger解决.&lt;/p&gt;</content><author><name>xoinstein</name></author><category term="blog" /></entry><entry><title type="html">Mac下brew安装MySQL后不知道密码，无法登陆</title><link href="/2017/09/07/mac-mysql-pwd/" rel="alternate" type="text/html" title="Mac下brew安装MySQL后不知道密码，无法登陆" /><published>2017-09-07T00:00:00+08:00</published><updated>2017-09-07T00:00:00+08:00</updated><id>/2017/09/07/mac-mysql-pwd</id><content type="html" xml:base="/2017/09/07/mac-mysql-pwd/">&lt;ul&gt;
+  &lt;li&gt;关闭Mysql服务
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  $ brew services stop mysql
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;开启服务(跳过验证)
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  $ mysqld_safe --skip-grant-tables
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;无密码登录
+    &lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;mysql &lt;span class=&quot;nt&quot;&gt;-uroot&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;设置密码&lt;/p&gt;
+
+    &lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;k&quot;&gt;UPDATE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mysql&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;user&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SET&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;authentication_string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PASSWORD&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'112358'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;User&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'root'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;FLUSH&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;PRIVILEGES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;开启MySQL服务，即可用新密码登录
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  $ brew services start mysql
+  $ mysql -uroot -p112358
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content><author><name>xoinstein</name></author><category term="blog" /></entry><entry><title type="html">ssh免密登录</title><link href="/2017/08/24/ssh-by-key/" rel="alternate" type="text/html" title="ssh免密登录" /><published>2017-08-24T00:00:00+08:00</published><updated>2017-08-24T00:00:00+08:00</updated><id>/2017/08/24/ssh-by-key</id><content type="html" xml:base="/2017/08/24/ssh-by-key/">&lt;p&gt;1) mkdir -p ~/.ssh/ecs&lt;/p&gt;
+
+&lt;p&gt;2) ssh-keygen -t rsa -b 4096 -C “xoinstein.com” -f ~/.ssh/ecs/xoinstein.com&lt;/p&gt;
+
+&lt;p&gt;3) ssh-copy-id -i ~/.ssh/ecs/xoinstein.com -p 22 root@xoinstein.com&lt;/p&gt;
+
+&lt;p&gt;4) ssh-add -K ~/.ssh/ecs/xoinstein.com&lt;/p&gt;
+
+&lt;p&gt;5) vi ~/.ssh/config 添加以下代码：&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; Host xoinstein.com
+
+    AddKeysToAgent yes
+
+    UseKeychain yes
+
+    IdentityFile ~/.ssh/ecs/xoinstein.com
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;6) alias ssh-xo=’ssh -p 22 root@xoinstein.com’ 添加到~/.bashrc 或 ~/.profile&lt;/p&gt;
+
+&lt;p&gt;7) ssh-xo登陆服务器&lt;/p&gt;</content><author><name>xoinstein</name></author><category term="blog" /></entry></feed>
