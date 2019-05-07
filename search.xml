@@ -2,6 +2,404 @@
 <search>
   
     <entry>
+      <title>Vagrant笔记</title>
+      <url>/2019/05/07/vagrant/</url>
+      <content type="text">Vagrant常用命令
+
+Box add
+
+Command:  vagrant box add ADDRESS
+
+This adds a box with the given address to Vagrant. The address can be one of three things:
+
+
+  A shorthand name from the public catalog of available Vagrant images, such as “hashicorp/precise64”.
+  File path or HTTP URL to a box in a catalog. For HTTP, basic authentication is supported and http_proxyenvironmental variables are respected. HTTPS is also supported.
+  URL directly a box file. In this case, you must specify a --name flag (see below) and versioning/updates will not work.
+
+
+If an error occurs during the download or the download is interrupted with a Ctrl-C, then Vagrant will attempt to resume the download the next time it is requested. Vagrant will only attempt to resume a download for 24 hours after the initial download.
+
+Init
+
+Command: vagrant init [name [url]]
+
+This initializes the current directory to be a Vagrant environment by creating an initial Vagrantfile if one does not already exist.
+
+If a first argument is given, it will prepopulate the config.vm.box setting in the created Vagrantfile.
+
+If a second argument is given, it will prepopulate the config.vm.box_url setting in the created Vagrantfile.
+
+Up
+
+
+  
+    
+      **Command: vagrant up [name
+      id]**
+    
+  
+
+
+This command creates and configures guest machines according to your Vagrantfile.
+
+This is the single most important command in Vagrant, since it is how any Vagrant machine is created. Anyone using Vagrant must use this command on a day-to-day basis.
+
+Ssh
+
+
+  
+    
+      **Command: vagrant ssh [name
+      id] [– extra_ssh_args]**
+    
+  
+
+
+This will SSH into a running Vagrant machine and give you access to a shell.
+
+On a simple vagrant project, the instance created will be named default.
+
+Vagrant will ssh into this instance without the instance name.
+
+Box list
+
+Command: vagrant box list
+
+This command lists all the boxes that are installed into Vagrant.
+
+Box remove
+
+Command: vagrant box remove NAME
+
+This command removes a box from Vagrant that matches the given name.
+
+If a box has multiple providers, the exact provider must be specified with the --provider flag. If a box has multiple versions, you can select what versions to delete with the --box-version flag or remove all versions with the --all flag.
+
+Destroy
+
+
+  
+    
+      **Command: vagrant destroy [name
+      id]**
+    
+  
+
+
+This command stops the running machine Vagrant is managing and destroys all resources that were created during the machine creation process. After running this command, your computer should be left at a clean state, as if you never created the guest machine in the first place.
+
+For linux-based guests, Vagrant uses the shutdown command to gracefully terminate the machine. Due to the varying nature of operating systems, the shutdown command may exist at many different locations in the guest’s $PATH. It is the guest machine’s responsibility to properly populate the $PATH with directory containing the shutdown command.
+
+Halt
+
+
+  
+    
+      **Command: vagrant halt [name
+      id]**
+    
+  
+
+
+This command shuts down the running machine Vagrant is managing.
+
+Vagrant will first attempt to gracefully shut down the machine by running the guest OS shutdown mechanism. If this fails, or if the --force flag is specified, Vagrant will effectively just shut off power to the machine.
+
+For linux-based guests, Vagrant uses the shutdown command to gracefully terminate the machine. Due to the varying nature of operating systems, the shutdown command may exist at many different locations in the guest’s $PATH. It is the guest machine’s responsibility to properly populate the $PATH with directory containing the shutdown command.
+
+Package
+
+
+  
+    
+      **Command: vagrant package [name
+      id]**
+    
+  
+
+
+This packages a currently running VirtualBox or Hyper-V environment into a re-usable box. This command can only be used with other providers based on the provider implementation and if the provider supports it.
+
+Plugin
+
+Command: vagrant plugin
+
+This is the command used to manage plugins.
+
+The main functionality of this command is exposed via another level of subcommands:
+
+
+  expunge
+  install
+  license
+  list
+  repair
+  uninstall
+  update
+
+
+Provision
+
+Command: vagrant provision [vm-name]
+
+Runs any configured provisioners against the running Vagrant managed machine.
+
+This command is a great way to quickly test any provisioners, and is especially useful for incremental development of shell scripts, Chef cookbooks, or Puppet modules. You can just make simple modifications to the provisioning scripts on your machine, run a vagrant provision, and check for the desired results. Rinse and repeat.
+
+Reload
+
+
+  
+    
+      **Command: vagrant reload [name
+      id]**
+    
+  
+
+
+The equivalent of running a halt followed by an up.
+
+This command is usually required for changes made in the Vagrantfile to take effect. After making any modifications to the Vagrantfile, a reload should be called.
+
+The configured provisioners will not run again, by default. You can force the provisioners to re-run by specifying the --provision flag.
+
+Resume
+
+
+  
+    
+      **Command: vagrant resume [name
+      id]**
+    
+  
+
+
+This resumes a Vagrant managed machine that was previously suspended, perhaps with the suspend command.
+
+The configured provisioners will not run again, by default. You can force the provisioners to re-run by specifying the --provision flag.
+
+Status
+
+
+  
+    
+      **Command: vagrant status [name
+      id]**
+    
+  
+
+
+This will tell you the state of the machines Vagrant is managing.
+
+It is quite easy, especially once you get comfortable with Vagrant, to forget whether your Vagrant machine is running, suspended, not created, etc. This command tells you the state of the underlying guest machine.
+
+Suspend
+
+
+  
+    
+      **Command: vagrant suspend [name
+      id]**
+    
+  
+
+
+This suspends the guest machine Vagrant is managing, rather than fully shutting it down or destroying it.
+
+A suspend effectively saves the exact point-in-time state of the machine, so that when you resume it later, it begins running immediately from that point, rather than doing a full boot.
+
+This generally requires extra disk space to store all the contents of the RAM within your guest machine, but the machine no longer consumes the RAM of your host machine or CPU cycles while it is suspended.
+
+Vagrantfile配置文件详解
+
+在我们的开发目录下有一个文件Vagrantfile，里面包含有大量的配置信息，主要包括三个方面的配置，虚拟机的配置、SSH配置、Vagrant的一些基础配置。
+
+box设置
+
+config.vm.box = “base”
+
+上面这配置展示了Vagrant要去启用那个box作为系统，也就是上面我们输入vagrant init Box名称时所指定的box，如果沒有输入box名称的話，那么默认就是base，VirtualBox提供了VBoxManage这个命令行工具，可以让我们设定VM，用modifyvm这个命令让我们可以设定VM的名称和内存大小等等，这里说的名称指的是在VirtualBox中显示的名称，我们也可以在Vagrantfile中进行设定，在Vagrantfile中加入如下这行就可以设定了：
+
+config.vm.provider &quot;virtualbox&quot; do |v|
+  v.customize [&quot;modifyvm&quot;, :id, &quot;--name&quot;, &quot;astaxie&quot;, &quot;--memory&quot;, &quot;512&quot;]
+end
+
+
+这行设置的意思是调用VBoxManage的modifyvm的命令，设置VM的名称为astaxie，内存为512MB。你可以类似的通过定制其它VM属性来定制你自己的VM。
+
+网络设置
+
+Vagrant有两种方式来进行网络连接，一种是host-only(主机模式)，意思是主机和虚拟机之间的网络互访，而不是虚拟机访问internet的技术，也就是只有你一個人自High，其他人访问不到你的虚拟机。另一种是Bridge(桥接模式)，该模式下的VM就像是局域网中的一台独立的主机，也就是说需要VM到你的路由器要IP，这样的话局域网里面其他机器就可以访问它了，一般我们设置虚拟机都是自high为主，所以我们的设置一般如下：
+
+config.vm.network :private_network, ip: &quot;11.11.11.11&quot;
+
+
+这里我们虚拟机设置为hostonly，并且指定了一个IP，IP的话建议最好不要用192.168..这个网段，因为很有可能和你局域网里面的其它机器IP冲突，所以最好使用类似11.11..这样的IP地址。
+
+hostname设置
+
+hostname的设置非常简单，Vagrantfile中加入下面这行就可以了：
+
+config.vm.hostname = &quot;go-app&quot;
+
+
+设置hostname非常重要，因为当我们有很多台虚拟服务器的时候，都是依靠hostname來做识别的，例如Puppet或是Chef，都是通过hostname來做识别的，既然设置那么简单，所以我们就別偷懒，设置一个。
+
+同步目录
+
+我们上面介绍过/vagrant目录默认就是当前的开发目录，这是在虚拟机开启的时候默认挂载同步的。我们还可以通过配置来设置额外的同步目录：
+
+config.vm.synced_folder  &quot;/Users/astaxie/data&quot;, &quot;/vagrant_data&quot;
+
+
+上面这个设定，第一个参数是主机的目录，第二个参数是虚拟机挂载的目录
+
+端口转发
+
+config.vm.network :forwarded_port, guest: 80, host: 8080
+
+上面这句配置可厉害了，这一行的意思是把对host机器上8080端口的访问请求forward到虚拟机的80端口的服务上，例如你在你的虚拟机上使用nginx跑了一个Go应用，那么你在host机器上的浏览器中打开http://localhost:8080时，Vagrant就会把这个请求转发到VM里面跑在80端口的nginx服务上，因此我们可以通过这个设置来帮助我们去设定host和VM之间，或是VM和VM之间的信息交互。
+
+
+  修改完Vagrantfile的配置后，记得要用vagrant reload命令来重启VM之后才能使用VM更新后的配置
+
+
+模拟打造多机器的分布式系统
+多机器分布式集群系统模式特别适合以下几种人：
+
+
+  快速建立产品网络的多机器环境，例如web服务器、db服务器
+  建立一个分布式系统，学习他们是如何交互的
+  测试API和其他组件的通信
+  容灾模拟，网络断网、机器死机、连接超时等情况
+
+
+Vagrant支持单机模拟多台机器，而且支持一个配置文件Vagrntfile就可以跑分布式系统。
+
+现在我们来建立多台VM跑起來，並且让他们之间能够相通信，假设一台是应用服务器、一台是DB服务器，那么这个结构在Vagrant中非常简单，其实和单台的配置差不多，你只需要通过config.vm.define来定义不同的角色就可以了，现在我们打开配置文件进行如下设置：
+
+Vagrant.configure(&quot;2&quot;) do |config|
+  config.vm.define :web do |web|
+    web.vm.provider &quot;virtualbox&quot; do |v|
+          v.customize [&quot;modifyvm&quot;, :id, &quot;--name&quot;, &quot;web&quot;, &quot;--memory&quot;, &quot;512&quot;]
+    end
+    web.vm.box = &quot;base&quot;
+    web.vm.hostname = &quot;web&quot;
+    web.vm.network :private_network, ip: &quot;11.11.1.1&quot;
+  end
+
+  config.vm.define :db do |db|
+    db.vm.provider &quot;virtualbox&quot; do |v|
+          v.customize [&quot;modifyvm&quot;, :id, &quot;--name&quot;, &quot;db&quot;, &quot;--memory&quot;, &quot;512&quot;]
+    end
+    db.vm.box = &quot;base&quot;
+    db.vm.hostname = &quot;db&quot;
+    db.vm.network :private_network, ip: &quot;11.11.1.2&quot;
+  end
+end
+
+
+这里的设置和前面我们单机设置配置类似，只是我们使用了:web以及:db分別做了两个VM的设置，并且给每个VM设置了不同的hostname和IP，设置好之后再使用vagrant up将虚拟机跑起来：
+
+$ vagrant up
+Bringing machine 'web' up with 'virtualbox' provider...
+Bringing machine 'db' up with 'virtualbox' provider...
+[web] Setting the name of the VM...
+[web] Clearing any previously set forwarded ports...
+[web] Creating shared folders metadata...
+[web] Clearing any previously set network interfaces...
+[web] Preparing network interfaces based on configuration...
+[web] Forwarding ports...
+[web] -- 22 =&amp;gt; 2222 (adapter 1)
+[web] Running any VM customizations...
+[web] Booting VM...
+[web] Waiting for VM to boot. This can take a few minutes.
+[web] VM booted and ready for use!
+[web] Setting hostname...
+[web] Configuring and enabling network interfaces...
+[web] Mounting shared folders...
+[web] -- /vagrant
+[db] Setting the name of the VM...
+[db] Clearing any previously set forwarded ports...
+[db] Fixed port collision for 22 =&amp;gt; 2222. Now on port 2200.
+[db] Creating shared folders metadata...
+[db] Clearing any previously set network interfaces...
+[db] Preparing network interfaces based on configuration...
+[db] Forwarding ports...
+[db] -- 22 =&amp;gt; 2200 (adapter 1)
+[db] Running any VM customizations...
+[db] Booting VM...
+[db] Waiting for VM to boot. This can take a few minutes.
+[db] VM booted and ready for use!
+[db] Setting hostname...
+[db] Configuring and enabling network interfaces...
+[db] Mounting shared folders...
+[db] -- /vagrant
+
+
+看到上面的信息输出后，我们就可以通过vagrant ssh登录虚拟机了，但是这次和上次使用的不一样了，这次我们需要指定相应的角色，用来告诉ssh你期望连接的是哪一台：
+
+$ vagrant ssh web
+vagrant@web:~$
+
+$ vagrant ssh db
+vagrant@db:~$
+
+
+是不是很酷！现在接下来我们再来验证一下虚拟机之间的通信，让我们先使用ssh登录web虚拟机，然后在web虚拟机上使用ssh登录db虚拟机(默认密码是vagrant)：
+
+$ vagrant ssh web
+Linux web 2.6.32-38-server #83-Ubuntu SMP Wed Jan 4 11:26:59 UTC 2012 x86_64 GNU/Linux
+Ubuntu 10.04.4 LTS
+
+Welcome to the Ubuntu Server!
+ * Documentation:  http://www.ubuntu.com/server/doc
+New release 'precise' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+Welcome to your Vagrant-built virtual machine.
+Last login: Thu Aug  8 18:55:44 2013 from 10.0.2.2
+vagrant@web:~$ ssh 11.11.1.2
+The authenticity of host '11.11.1.2 (11.11.1.2)' can't be established.
+RSA key fingerprint is e7:8f:07:57:69:08:6e:fa:82:bc:1c:f6:53:3f:12:9e.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '11.11.1.2' (RSA) to the list of known hosts.
+vagrant@11.11.1.2's password:
+Linux db 2.6.32-38-server #83-Ubuntu SMP Wed Jan 4 11:26:59 UTC 2012 x86_64 GNU/Linux
+Ubuntu 10.04.4 LTS
+
+Welcome to the Ubuntu Server!
+ * Documentation:  http://www.ubuntu.com/server/doc
+New release 'precise' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+Welcome to your Vagrant-built virtual machine.
+Last login: Thu Aug  8 18:58:50 2013 from 10.0.2.2
+vagrant@db:~$
+
+
+
+  参考
+
+  https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.2.md
+
+  https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.3.md
+
+
+</content>
+      <categories>
+        
+      </categories>
+      <tags>
+        
+          <tag> blog </tag>
+        
+      </tags>
+      <tags></tags>
+    </entry>
+  
+    <entry>
       <title>PHP中tempnam函数dir参数不可访问却取系统tmp目录</title>
       <url>/2018/05/07/tempnam/</url>
       <content type="text">项目中需要将LaTex公式转为图片传给前端,实现方式是利用exec分别调用系统的latex/dvips/convert命令,最终生成png文件.

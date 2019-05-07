@@ -1,0 +1,1192 @@
+
+<!doctype html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/assets/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/assets/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="blog," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Vagrant常用命令 Box add Command: vagrant box add ADDRESS This adds a box with the given address to Vagrant. The address can be one of three things: A shorthand name from the public catalog of available Vagrant images, such as “hashicorp/precise64”. File path or HTTP URL to a box in a catalog. For HTTP, basic authentication is supported and http_proxyenvironmental variables are respected. HTTPS is also supported. URL directly a box file. In this case, you must specify a --name flag (see below) and versioning/updates will not work. If an error occurs during the download or the download is interrupted with a Ctrl-C, then Vagrant will attempt to resume the download the next time it is requested. Vagrant will only attempt to resume a download for 24 hours after the initial download. Init Command: vagrant init [name [url]] This initializes the current directory to be a Vagrant environment by creating an initial Vagrantfile if one does not already exist. If a first argument is given, it will prepopulate the config.vm.box setting in the created Vagrantfile. If a second argument is given, it will prepopulate the config.vm.box_url setting in the created Vagrantfile. Up **Command: vagrant up [name id]** This command creates and configures guest machines according to your Vagrantfile. This is the single most important command in Vagrant, since it is how any Vagrant machine is created. Anyone using Vagrant must use this command on a day-to-day basis. Ssh **Command: vagrant ssh [name id] [– extra_ssh_args]** This will SSH into a running Vagrant machine and give you access to a shell. On a simple vagrant project, the instance created will be named default. Vagrant will ssh into this instance without the instance name. Box list Command: vagrant box list This command lists all the boxes that are installed into Vagrant. Box remove Command: vagrant box remove NAME This command removes a box from Vagrant that matches the given name. If a box has multiple providers, the exact provider must be specified with the --provider flag. If a box has multiple versions, you can select what versions to delete with the --box-version flag or remove all versions with the --all flag. Destroy **Command: vagrant destroy [name id]** This command stops the running machine Vagrant is managing and destroys all resources that were created during the machine creation process. After running this command, your computer should be left at a clean state, as if you never created the guest machine in the first place. For linux-based guests, Vagrant uses the shutdown command to gracefully terminate the machine. Due to the varying nature of operating systems, the shutdown command may exist at many different locations in the guest’s $PATH. It is the guest machine’s responsibility to properly populate the $PATH with directory containing the shutdown command. Halt **Command: vagrant halt [name id]** This command shuts down the running machine Vagrant is managing. Vagrant will first attempt to gracefully shut down the machine by running the guest OS shutdown mechanism. If this fails, or if the --force flag is specified, Vagrant will effectively just shut off power to the machine. For linux-based guests, Vagrant uses the shutdown command to gracefully terminate the machine. Due to the varying nature of operating systems, the shutdown command may exist at many different locations in the guest’s $PATH. It is the guest machine’s responsibility to properly populate the $PATH with directory containing the shutdown command. Package **Command: vagrant package [name id]** This packages a currently running VirtualBox or Hyper-V environment into a re-usable box. This command can only be used with other providers based on the provider implementation and if the provider supports it. Plugin Command: vagrant plugin This is the command used to manage plugins. The main functionality of this command is exposed via another level of subcommands: expunge install license list repair uninstall update Provision Command: vagrant provision [vm-name] Runs any configured provisioners against the running Vagrant managed machine. This command is a great way to quickly test any provisioners, and is especially useful for incremental development of shell scripts, Chef cookbooks, or Puppet modules. You can just make simple modifications to the provisioning scripts on your machine, run a vagrant provision, and check for the desired results. Rinse and repeat. Reload **Command: vagrant reload [name id]** The equivalent of running a halt followed by an up. This command is usually required for changes made in the Vagrantfile to take effect. After making any modifications to the Vagrantfile, a reload should be called. The configured provisioners will not run again, by default. You can force the provisioners to re-run by specifying the --provision flag. Resume **Command: vagrant resume [name id]** This resumes a Vagrant managed machine that was previously suspended, perhaps with the suspend command. The configured provisioners will not run again, by default. You can force the provisioners to re-run by specifying the --provision flag. Status **Command: vagrant status [name id]** This will tell you the state of the machines Vagrant is managing. It is quite easy, especially once you get comfortable with Vagrant, to forget whether your Vagrant machine is running, suspended, not created, etc. This command tells you the state of the underlying guest machine. Suspend **Command: vagrant suspend [name id]** This suspends the guest machine Vagrant is managing, rather than fully shutting it down or destroying it. A suspend effectively saves the exact point-in-time state of the machine, so that when you resume it later, it begins running immediately from that point, rather than doing a full boot. This generally requires extra disk space to store all the contents of the RAM within your guest machine, but the machine no longer consumes the RAM of your host machine or CPU cycles while it is suspended. Vagrantfile配置文件详解 在我们的开发目录下有一个文件Vagrantfile，里面包含有大量的配置信息，主要包括三个方面的配置，虚拟机的配置、SSH配置、Vagrant的一些基础配置。 box设置 config.vm.box = “base” 上面这配置展示了Vagrant要去启用那个box作为系统，也就是上面我们输入vagrant init Box名称时所指定的box，如果沒有输入box名称的話，那么默认就是base，VirtualBox提供了VBoxManage这个命令行工具，可以让我们设定VM，用modifyvm这个命令让我们可以设定VM的名称和内存大小等等，这里说的名称指的是在VirtualBox中显示的名称，我们也可以在Vagrantfile中进行设定，在Vagrantfile中加入如下这行就可以设定了： config.vm.provider &quot;virtualbox&quot; do |v| v.customize [&quot;modifyvm&quot;, :id, &quot;--name&quot;, &quot;astaxie&quot;, &quot;--memory&quot;, &quot;512&quot;] end 这行设置的意思是调用VBoxManage的modifyvm的命令，设置VM的名称为astaxie，内存为512MB。你可以类似的通过定制其它VM属性来定制你自己的VM。 网络设置 Vagrant有两种方式来进行网络连接，一种是host-only(主机模式)，意思是主机和虚拟机之间的网络互访，而不是虚拟机访问internet的技术，也就是只有你一個人自High，其他人访问不到你的虚拟机。另一种是Bridge(桥接模式)，该模式下的VM就像是局域网中的一台独立的主机，也就是说需要VM到你的路由器要IP，这样的话局域网里面其他机器就可以访问它了，一般我们设置虚拟机都是自high为主，所以我们的设置一般如下： config.vm.network :private_network, ip: &quot;11.11.11.11&quot; 这里我们虚拟机设置为hostonly，并且指定了一个IP，IP的话建议最好不要用192.168..这个网段，因为很有可能和你局域网里面的其它机器IP冲突，所以最好使用类似11.11..这样的IP地址。 hostname设置 hostname的设置非常简单，Vagrantfile中加入下面这行就可以了： config.vm.hostname = &quot;go-app&quot; 设置hostname非常重要，因为当我们有很多台虚拟服务器的时候，都是依靠hostname來做识别的，例如Puppet或是Chef，都是通过hostname來做识别的，既然设置那么简单，所以我们就別偷懒，设置一个。 同步目录 我们上面介绍过/vagrant目录默认就是当前的开发目录，这是在虚拟机开启的时候默认挂载同步的。我们还可以通过配置来设置额外的同步目录： config.vm.synced_folder &quot;/Users/astaxie/data&quot;, &quot;/vagrant_data&quot; 上面这个设定，第一个参数是主机的目录，第二个参数是虚拟机挂载的目录 端口转发 config.vm.network :forwarded_port, guest: 80, host: 8080 上面这句配置可厉害了，这一行的意思是把对host机器上8080端口的访问请求forward到虚拟机的80端口的服务上，例如你在你的虚拟机上使用nginx跑了一个Go应用，那么你在host机器上的浏览器中打开http://localhost:8080时，Vagrant就会把这个请求转发到VM里面跑在80端口的nginx服务上，因此我们可以通过这个设置来帮助我们去设定host和VM之间，或是VM和VM之间的信息交互。 修改完Vagrantfile的配置后，记得要用vagrant reload命令来重启VM之后才能使用VM更新后的配置 模拟打造多机器的分布式系统 多机器分布式集群系统模式特别适合以下几种人： 快速建立产品网络的多机器环境，例如web服务器、db服务器 建立一个分布式系统，学习他们是如何交互的 测试API和其他组件的通信 容灾模拟，网络断网、机器死机、连接超时等情况 Vagrant支持单机模拟多台机器，而且支持一个配置文件Vagrntfile就可以跑分布式系统。 现在我们来建立多台VM跑起來，並且让他们之间能够相通信，假设一台是应用服务器、一台是DB服务器，那么这个结构在Vagrant中非常简单，其实和单台的配置差不多，你只需要通过config.vm.define来定义不同的角色就可以了，现在我们打开配置文件进行如下设置： Vagrant.configure(&quot;2&quot;) do |config| config.vm.define :web do |web| web.vm.provider &quot;virtualbox&quot; do |v| v.customize [&quot;modifyvm&quot;, :id, &quot;--name&quot;, &quot;web&quot;, &quot;--memory&quot;, &quot;512&quot;] end web.vm.box = &quot;base&quot; web.vm.hostname = &quot;web&quot; web.vm.network :private_network, ip: &quot;11.11.1.1&quot; end config.vm.define :db do |db| db.vm.provider &quot;virtualbox&quot; do |v| v.customize [&quot;modifyvm&quot;, :id, &quot;--name&quot;, &quot;db&quot;, &quot;--memory&quot;, &quot;512&quot;] end db.vm.box = &quot;base&quot; db.vm.hostname = &quot;db&quot; db.vm.network :private_network, ip: &quot;11.11.1.2&quot; end end 这里的设置和前面我们单机设置配置类似，只是我们使用了:web以及:db分別做了两个VM的设置，并且给每个VM设置了不同的hostname和IP，设置好之后再使用vagrant up将虚拟机跑起来： $ vagrant up Bringing machine &apos;web&apos; up with &apos;virtualbox&apos; provider... Bringing machine &apos;db&apos; up with &apos;virtualbox&apos; provider... [web] Setting the name of the VM... [web] Clearing any previously set forwarded ports... [web] Creating shared folders metadata... [web] Clearing any previously set network interfaces... [web] Preparing network interfaces based on configuration... [web] Forwarding ports... [web] -- 22 =&amp;gt; 2222 (adapter 1) [web] Running any VM customizations... [web] Booting VM... [web] Waiting for VM to boot. This can take a few minutes. [web] VM booted and ready for use! [web] Setting hostname... [web] Configuring and enabling network interfaces... [web] Mounting shared folders... [web] -- /vagrant [db] Setting the name of the VM... [db] Clearing any previously set forwarded ports... [db] Fixed port collision for 22 =&amp;gt; 2222. Now on port 2200. [db] Creating shared folders metadata... [db] Clearing any previously set network interfaces... [db] Preparing network interfaces based on configuration... [db] Forwarding ports... [db] -- 22 =&amp;gt; 2200 (adapter 1) [db] Running any VM customizations... [db] Booting VM... [db] Waiting for VM to boot. This can take a few minutes. [db] VM booted and ready for use! [db] Setting hostname... [db] Configuring and enabling network interfaces... [db] Mounting shared folders... [db] -- /vagrant 看到上面的信息输出后，我们就可以通过vagrant ssh登录虚拟机了，但是这次和上次使用的不一样了，这次我们需要指定相应的角色，用来告诉ssh你期望连接的是哪一台： $ vagrant ssh web vagrant@web:~$ $ vagrant ssh db vagrant@db:~$ 是不是很酷！现在接下来我们再来验证一下虚拟机之间的通信，让我们先使用ssh登录web虚拟机，然后在web虚拟机上使用ssh登录db虚拟机(默认密码是vagrant)： $ vagrant ssh web Linux web 2.6.32-38-server #83-Ubuntu SMP Wed Jan 4 11:26:59 UTC 2012 x86_64 GNU/Linux Ubuntu 10.04.4 LTS Welcome to the Ubuntu Server! * Documentation: http://www.ubuntu.com/server/doc New release &apos;precise&apos; available. Run &apos;do-release-upgrade&apos; to upgrade to it. Welcome to your Vagrant-built virtual machine. Last login: Thu Aug 8 18:55:44 2013 from 10.0.2.2 vagrant@web:~$ ssh 11.11.1.2 The authenticity of host &apos;11.11.1.2 (11.11.1.2)&apos; can&apos;t be established. RSA key fingerprint is e7:8f:07:57:69:08:6e:fa:82:bc:1c:f6:53:3f:12:9e. Are you sure you want to continue connecting (yes/no)? yes Warning: Permanently added &apos;11.11.1.2&apos; (RSA) to the list of known hosts. vagrant@11.11.1.2&apos;s password: Linux db 2.6.32-38-server #83-Ubuntu SMP Wed Jan 4 11:26:59 UTC 2012 x86_64 GNU/Linux Ubuntu 10.04.4 LTS Welcome to the Ubuntu Server! * Documentation: http://www.ubuntu.com/server/doc New release &apos;precise&apos; available. Run &apos;do-release-upgrade&apos; to upgrade to it. Welcome to your Vagrant-built virtual machine. Last login: Thu Aug 8 18:58:50 2013 from 10.0.2.2 vagrant@db:~$ 参考 https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.2.md https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.3.md">
+<meta name="keywords" content="blog">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vagrant笔记">
+<meta property="og:url" content="/2019/05/07/vagrant/">
+<meta property="og:site_name" content="Xoinstein">
+<meta property="og:description" content="Vagrant常用命令 Box add Command: vagrant box add ADDRESS This adds a box with the given address to Vagrant. The address can be one of three things: A shorthand name from the public catalog of available Vagrant images, such as “hashicorp/precise64”. File path or HTTP URL to a box in a catalog. For HTTP, basic authentication is supported and http_proxyenvironmental variables are respected. HTTPS is also supported. URL directly a box file. In this case, you must specify a --name flag (see below) and versioning/updates will not work. If an error occurs during the download or the download is interrupted with a Ctrl-C, then Vagrant will attempt to resume the download the next time it is requested. Vagrant will only attempt to resume a download for 24 hours after the initial download. Init Command: vagrant init [name [url]] This initializes the current directory to be a Vagrant environment by creating an initial Vagrantfile if one does not already exist. If a first argument is given, it will prepopulate the config.vm.box setting in the created Vagrantfile. If a second argument is given, it will prepopulate the config.vm.box_url setting in the created Vagrantfile. Up **Command: vagrant up [name id]** This command creates and configures guest machines according to your Vagrantfile. This is the single most important command in Vagrant, since it is how any Vagrant machine is created. Anyone using Vagrant must use this command on a day-to-day basis. Ssh **Command: vagrant ssh [name id] [– extra_ssh_args]** This will SSH into a running Vagrant machine and give you access to a shell. On a simple vagrant project, the instance created will be named default. Vagrant will ssh into this instance without the instance name. Box list Command: vagrant box list This command lists all the boxes that are installed into Vagrant. Box remove Command: vagrant box remove NAME This command removes a box from Vagrant that matches the given name. If a box has multiple providers, the exact provider must be specified with the --provider flag. If a box has multiple versions, you can select what versions to delete with the --box-version flag or remove all versions with the --all flag. Destroy **Command: vagrant destroy [name id]** This command stops the running machine Vagrant is managing and destroys all resources that were created during the machine creation process. After running this command, your computer should be left at a clean state, as if you never created the guest machine in the first place. For linux-based guests, Vagrant uses the shutdown command to gracefully terminate the machine. Due to the varying nature of operating systems, the shutdown command may exist at many different locations in the guest’s $PATH. It is the guest machine’s responsibility to properly populate the $PATH with directory containing the shutdown command. Halt **Command: vagrant halt [name id]** This command shuts down the running machine Vagrant is managing. Vagrant will first attempt to gracefully shut down the machine by running the guest OS shutdown mechanism. If this fails, or if the --force flag is specified, Vagrant will effectively just shut off power to the machine. For linux-based guests, Vagrant uses the shutdown command to gracefully terminate the machine. Due to the varying nature of operating systems, the shutdown command may exist at many different locations in the guest’s $PATH. It is the guest machine’s responsibility to properly populate the $PATH with directory containing the shutdown command. Package **Command: vagrant package [name id]** This packages a currently running VirtualBox or Hyper-V environment into a re-usable box. This command can only be used with other providers based on the provider implementation and if the provider supports it. Plugin Command: vagrant plugin This is the command used to manage plugins. The main functionality of this command is exposed via another level of subcommands: expunge install license list repair uninstall update Provision Command: vagrant provision [vm-name] Runs any configured provisioners against the running Vagrant managed machine. This command is a great way to quickly test any provisioners, and is especially useful for incremental development of shell scripts, Chef cookbooks, or Puppet modules. You can just make simple modifications to the provisioning scripts on your machine, run a vagrant provision, and check for the desired results. Rinse and repeat. Reload **Command: vagrant reload [name id]** The equivalent of running a halt followed by an up. This command is usually required for changes made in the Vagrantfile to take effect. After making any modifications to the Vagrantfile, a reload should be called. The configured provisioners will not run again, by default. You can force the provisioners to re-run by specifying the --provision flag. Resume **Command: vagrant resume [name id]** This resumes a Vagrant managed machine that was previously suspended, perhaps with the suspend command. The configured provisioners will not run again, by default. You can force the provisioners to re-run by specifying the --provision flag. Status **Command: vagrant status [name id]** This will tell you the state of the machines Vagrant is managing. It is quite easy, especially once you get comfortable with Vagrant, to forget whether your Vagrant machine is running, suspended, not created, etc. This command tells you the state of the underlying guest machine. Suspend **Command: vagrant suspend [name id]** This suspends the guest machine Vagrant is managing, rather than fully shutting it down or destroying it. A suspend effectively saves the exact point-in-time state of the machine, so that when you resume it later, it begins running immediately from that point, rather than doing a full boot. This generally requires extra disk space to store all the contents of the RAM within your guest machine, but the machine no longer consumes the RAM of your host machine or CPU cycles while it is suspended. Vagrantfile配置文件详解 在我们的开发目录下有一个文件Vagrantfile，里面包含有大量的配置信息，主要包括三个方面的配置，虚拟机的配置、SSH配置、Vagrant的一些基础配置。 box设置 config.vm.box = “base” 上面这配置展示了Vagrant要去启用那个box作为系统，也就是上面我们输入vagrant init Box名称时所指定的box，如果沒有输入box名称的話，那么默认就是base，VirtualBox提供了VBoxManage这个命令行工具，可以让我们设定VM，用modifyvm这个命令让我们可以设定VM的名称和内存大小等等，这里说的名称指的是在VirtualBox中显示的名称，我们也可以在Vagrantfile中进行设定，在Vagrantfile中加入如下这行就可以设定了： config.vm.provider &quot;virtualbox&quot; do |v| v.customize [&quot;modifyvm&quot;, :id, &quot;--name&quot;, &quot;astaxie&quot;, &quot;--memory&quot;, &quot;512&quot;] end 这行设置的意思是调用VBoxManage的modifyvm的命令，设置VM的名称为astaxie，内存为512MB。你可以类似的通过定制其它VM属性来定制你自己的VM。 网络设置 Vagrant有两种方式来进行网络连接，一种是host-only(主机模式)，意思是主机和虚拟机之间的网络互访，而不是虚拟机访问internet的技术，也就是只有你一個人自High，其他人访问不到你的虚拟机。另一种是Bridge(桥接模式)，该模式下的VM就像是局域网中的一台独立的主机，也就是说需要VM到你的路由器要IP，这样的话局域网里面其他机器就可以访问它了，一般我们设置虚拟机都是自high为主，所以我们的设置一般如下： config.vm.network :private_network, ip: &quot;11.11.11.11&quot; 这里我们虚拟机设置为hostonly，并且指定了一个IP，IP的话建议最好不要用192.168..这个网段，因为很有可能和你局域网里面的其它机器IP冲突，所以最好使用类似11.11..这样的IP地址。 hostname设置 hostname的设置非常简单，Vagrantfile中加入下面这行就可以了： config.vm.hostname = &quot;go-app&quot; 设置hostname非常重要，因为当我们有很多台虚拟服务器的时候，都是依靠hostname來做识别的，例如Puppet或是Chef，都是通过hostname來做识别的，既然设置那么简单，所以我们就別偷懒，设置一个。 同步目录 我们上面介绍过/vagrant目录默认就是当前的开发目录，这是在虚拟机开启的时候默认挂载同步的。我们还可以通过配置来设置额外的同步目录： config.vm.synced_folder &quot;/Users/astaxie/data&quot;, &quot;/vagrant_data&quot; 上面这个设定，第一个参数是主机的目录，第二个参数是虚拟机挂载的目录 端口转发 config.vm.network :forwarded_port, guest: 80, host: 8080 上面这句配置可厉害了，这一行的意思是把对host机器上8080端口的访问请求forward到虚拟机的80端口的服务上，例如你在你的虚拟机上使用nginx跑了一个Go应用，那么你在host机器上的浏览器中打开http://localhost:8080时，Vagrant就会把这个请求转发到VM里面跑在80端口的nginx服务上，因此我们可以通过这个设置来帮助我们去设定host和VM之间，或是VM和VM之间的信息交互。 修改完Vagrantfile的配置后，记得要用vagrant reload命令来重启VM之后才能使用VM更新后的配置 模拟打造多机器的分布式系统 多机器分布式集群系统模式特别适合以下几种人： 快速建立产品网络的多机器环境，例如web服务器、db服务器 建立一个分布式系统，学习他们是如何交互的 测试API和其他组件的通信 容灾模拟，网络断网、机器死机、连接超时等情况 Vagrant支持单机模拟多台机器，而且支持一个配置文件Vagrntfile就可以跑分布式系统。 现在我们来建立多台VM跑起來，並且让他们之间能够相通信，假设一台是应用服务器、一台是DB服务器，那么这个结构在Vagrant中非常简单，其实和单台的配置差不多，你只需要通过config.vm.define来定义不同的角色就可以了，现在我们打开配置文件进行如下设置： Vagrant.configure(&quot;2&quot;) do |config| config.vm.define :web do |web| web.vm.provider &quot;virtualbox&quot; do |v| v.customize [&quot;modifyvm&quot;, :id, &quot;--name&quot;, &quot;web&quot;, &quot;--memory&quot;, &quot;512&quot;] end web.vm.box = &quot;base&quot; web.vm.hostname = &quot;web&quot; web.vm.network :private_network, ip: &quot;11.11.1.1&quot; end config.vm.define :db do |db| db.vm.provider &quot;virtualbox&quot; do |v| v.customize [&quot;modifyvm&quot;, :id, &quot;--name&quot;, &quot;db&quot;, &quot;--memory&quot;, &quot;512&quot;] end db.vm.box = &quot;base&quot; db.vm.hostname = &quot;db&quot; db.vm.network :private_network, ip: &quot;11.11.1.2&quot; end end 这里的设置和前面我们单机设置配置类似，只是我们使用了:web以及:db分別做了两个VM的设置，并且给每个VM设置了不同的hostname和IP，设置好之后再使用vagrant up将虚拟机跑起来： $ vagrant up Bringing machine &apos;web&apos; up with &apos;virtualbox&apos; provider... Bringing machine &apos;db&apos; up with &apos;virtualbox&apos; provider... [web] Setting the name of the VM... [web] Clearing any previously set forwarded ports... [web] Creating shared folders metadata... [web] Clearing any previously set network interfaces... [web] Preparing network interfaces based on configuration... [web] Forwarding ports... [web] -- 22 =&amp;gt; 2222 (adapter 1) [web] Running any VM customizations... [web] Booting VM... [web] Waiting for VM to boot. This can take a few minutes. [web] VM booted and ready for use! [web] Setting hostname... [web] Configuring and enabling network interfaces... [web] Mounting shared folders... [web] -- /vagrant [db] Setting the name of the VM... [db] Clearing any previously set forwarded ports... [db] Fixed port collision for 22 =&amp;gt; 2222. Now on port 2200. [db] Creating shared folders metadata... [db] Clearing any previously set network interfaces... [db] Preparing network interfaces based on configuration... [db] Forwarding ports... [db] -- 22 =&amp;gt; 2200 (adapter 1) [db] Running any VM customizations... [db] Booting VM... [db] Waiting for VM to boot. This can take a few minutes. [db] VM booted and ready for use! [db] Setting hostname... [db] Configuring and enabling network interfaces... [db] Mounting shared folders... [db] -- /vagrant 看到上面的信息输出后，我们就可以通过vagrant ssh登录虚拟机了，但是这次和上次使用的不一样了，这次我们需要指定相应的角色，用来告诉ssh你期望连接的是哪一台： $ vagrant ssh web vagrant@web:~$ $ vagrant ssh db vagrant@db:~$ 是不是很酷！现在接下来我们再来验证一下虚拟机之间的通信，让我们先使用ssh登录web虚拟机，然后在web虚拟机上使用ssh登录db虚拟机(默认密码是vagrant)： $ vagrant ssh web Linux web 2.6.32-38-server #83-Ubuntu SMP Wed Jan 4 11:26:59 UTC 2012 x86_64 GNU/Linux Ubuntu 10.04.4 LTS Welcome to the Ubuntu Server! * Documentation: http://www.ubuntu.com/server/doc New release &apos;precise&apos; available. Run &apos;do-release-upgrade&apos; to upgrade to it. Welcome to your Vagrant-built virtual machine. Last login: Thu Aug 8 18:55:44 2013 from 10.0.2.2 vagrant@web:~$ ssh 11.11.1.2 The authenticity of host &apos;11.11.1.2 (11.11.1.2)&apos; can&apos;t be established. RSA key fingerprint is e7:8f:07:57:69:08:6e:fa:82:bc:1c:f6:53:3f:12:9e. Are you sure you want to continue connecting (yes/no)? yes Warning: Permanently added &apos;11.11.1.2&apos; (RSA) to the list of known hosts. vagrant@11.11.1.2&apos;s password: Linux db 2.6.32-38-server #83-Ubuntu SMP Wed Jan 4 11:26:59 UTC 2012 x86_64 GNU/Linux Ubuntu 10.04.4 LTS Welcome to the Ubuntu Server! * Documentation: http://www.ubuntu.com/server/doc New release &apos;precise&apos; available. Run &apos;do-release-upgrade&apos; to upgrade to it. Welcome to your Vagrant-built virtual machine. Last login: Thu Aug 8 18:58:50 2013 from 10.0.2.2 vagrant@db:~$ 参考 https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.2.md https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.3.md">
+<meta property="og:locale" content="zh-Hans">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vagrant笔记">
+<meta name="twitter:description" content="Vagrant常用命令 Box add Command: vagrant box add ADDRESS This adds a box with the given address to Vagrant. The address can be one of three things: A shorthand name from the public catalog of available Vagrant images, such as “hashicorp/precise64”. File path or HTTP URL to a box in a catalog. For HTTP, basic authentication is supported and http_proxyenvironmental variables are respected. HTTPS is also supported. URL directly a box file. In this case, you must specify a --name flag (see below) and versioning/updates will not work. If an error occurs during the download or the download is interrupted with a Ctrl-C, then Vagrant will attempt to resume the download the next time it is requested. Vagrant will only attempt to resume a download for 24 hours after the initial download. Init Command: vagrant init [name [url]] This initializes the current directory to be a Vagrant environment by creating an initial Vagrantfile if one does not already exist. If a first argument is given, it will prepopulate the config.vm.box setting in the created Vagrantfile. If a second argument is given, it will prepopulate the config.vm.box_url setting in the created Vagrantfile. Up **Command: vagrant up [name id]** This command creates and configures guest machines according to your Vagrantfile. This is the single most important command in Vagrant, since it is how any Vagrant machine is created. Anyone using Vagrant must use this command on a day-to-day basis. Ssh **Command: vagrant ssh [name id] [– extra_ssh_args]** This will SSH into a running Vagrant machine and give you access to a shell. On a simple vagrant project, the instance created will be named default. Vagrant will ssh into this instance without the instance name. Box list Command: vagrant box list This command lists all the boxes that are installed into Vagrant. Box remove Command: vagrant box remove NAME This command removes a box from Vagrant that matches the given name. If a box has multiple providers, the exact provider must be specified with the --provider flag. If a box has multiple versions, you can select what versions to delete with the --box-version flag or remove all versions with the --all flag. Destroy **Command: vagrant destroy [name id]** This command stops the running machine Vagrant is managing and destroys all resources that were created during the machine creation process. After running this command, your computer should be left at a clean state, as if you never created the guest machine in the first place. For linux-based guests, Vagrant uses the shutdown command to gracefully terminate the machine. Due to the varying nature of operating systems, the shutdown command may exist at many different locations in the guest’s $PATH. It is the guest machine’s responsibility to properly populate the $PATH with directory containing the shutdown command. Halt **Command: vagrant halt [name id]** This command shuts down the running machine Vagrant is managing. Vagrant will first attempt to gracefully shut down the machine by running the guest OS shutdown mechanism. If this fails, or if the --force flag is specified, Vagrant will effectively just shut off power to the machine. For linux-based guests, Vagrant uses the shutdown command to gracefully terminate the machine. Due to the varying nature of operating systems, the shutdown command may exist at many different locations in the guest’s $PATH. It is the guest machine’s responsibility to properly populate the $PATH with directory containing the shutdown command. Package **Command: vagrant package [name id]** This packages a currently running VirtualBox or Hyper-V environment into a re-usable box. This command can only be used with other providers based on the provider implementation and if the provider supports it. Plugin Command: vagrant plugin This is the command used to manage plugins. The main functionality of this command is exposed via another level of subcommands: expunge install license list repair uninstall update Provision Command: vagrant provision [vm-name] Runs any configured provisioners against the running Vagrant managed machine. This command is a great way to quickly test any provisioners, and is especially useful for incremental development of shell scripts, Chef cookbooks, or Puppet modules. You can just make simple modifications to the provisioning scripts on your machine, run a vagrant provision, and check for the desired results. Rinse and repeat. Reload **Command: vagrant reload [name id]** The equivalent of running a halt followed by an up. This command is usually required for changes made in the Vagrantfile to take effect. After making any modifications to the Vagrantfile, a reload should be called. The configured provisioners will not run again, by default. You can force the provisioners to re-run by specifying the --provision flag. Resume **Command: vagrant resume [name id]** This resumes a Vagrant managed machine that was previously suspended, perhaps with the suspend command. The configured provisioners will not run again, by default. You can force the provisioners to re-run by specifying the --provision flag. Status **Command: vagrant status [name id]** This will tell you the state of the machines Vagrant is managing. It is quite easy, especially once you get comfortable with Vagrant, to forget whether your Vagrant machine is running, suspended, not created, etc. This command tells you the state of the underlying guest machine. Suspend **Command: vagrant suspend [name id]** This suspends the guest machine Vagrant is managing, rather than fully shutting it down or destroying it. A suspend effectively saves the exact point-in-time state of the machine, so that when you resume it later, it begins running immediately from that point, rather than doing a full boot. This generally requires extra disk space to store all the contents of the RAM within your guest machine, but the machine no longer consumes the RAM of your host machine or CPU cycles while it is suspended. Vagrantfile配置文件详解 在我们的开发目录下有一个文件Vagrantfile，里面包含有大量的配置信息，主要包括三个方面的配置，虚拟机的配置、SSH配置、Vagrant的一些基础配置。 box设置 config.vm.box = “base” 上面这配置展示了Vagrant要去启用那个box作为系统，也就是上面我们输入vagrant init Box名称时所指定的box，如果沒有输入box名称的話，那么默认就是base，VirtualBox提供了VBoxManage这个命令行工具，可以让我们设定VM，用modifyvm这个命令让我们可以设定VM的名称和内存大小等等，这里说的名称指的是在VirtualBox中显示的名称，我们也可以在Vagrantfile中进行设定，在Vagrantfile中加入如下这行就可以设定了： config.vm.provider &quot;virtualbox&quot; do |v| v.customize [&quot;modifyvm&quot;, :id, &quot;--name&quot;, &quot;astaxie&quot;, &quot;--memory&quot;, &quot;512&quot;] end 这行设置的意思是调用VBoxManage的modifyvm的命令，设置VM的名称为astaxie，内存为512MB。你可以类似的通过定制其它VM属性来定制你自己的VM。 网络设置 Vagrant有两种方式来进行网络连接，一种是host-only(主机模式)，意思是主机和虚拟机之间的网络互访，而不是虚拟机访问internet的技术，也就是只有你一個人自High，其他人访问不到你的虚拟机。另一种是Bridge(桥接模式)，该模式下的VM就像是局域网中的一台独立的主机，也就是说需要VM到你的路由器要IP，这样的话局域网里面其他机器就可以访问它了，一般我们设置虚拟机都是自high为主，所以我们的设置一般如下： config.vm.network :private_network, ip: &quot;11.11.11.11&quot; 这里我们虚拟机设置为hostonly，并且指定了一个IP，IP的话建议最好不要用192.168..这个网段，因为很有可能和你局域网里面的其它机器IP冲突，所以最好使用类似11.11..这样的IP地址。 hostname设置 hostname的设置非常简单，Vagrantfile中加入下面这行就可以了： config.vm.hostname = &quot;go-app&quot; 设置hostname非常重要，因为当我们有很多台虚拟服务器的时候，都是依靠hostname來做识别的，例如Puppet或是Chef，都是通过hostname來做识别的，既然设置那么简单，所以我们就別偷懒，设置一个。 同步目录 我们上面介绍过/vagrant目录默认就是当前的开发目录，这是在虚拟机开启的时候默认挂载同步的。我们还可以通过配置来设置额外的同步目录： config.vm.synced_folder &quot;/Users/astaxie/data&quot;, &quot;/vagrant_data&quot; 上面这个设定，第一个参数是主机的目录，第二个参数是虚拟机挂载的目录 端口转发 config.vm.network :forwarded_port, guest: 80, host: 8080 上面这句配置可厉害了，这一行的意思是把对host机器上8080端口的访问请求forward到虚拟机的80端口的服务上，例如你在你的虚拟机上使用nginx跑了一个Go应用，那么你在host机器上的浏览器中打开http://localhost:8080时，Vagrant就会把这个请求转发到VM里面跑在80端口的nginx服务上，因此我们可以通过这个设置来帮助我们去设定host和VM之间，或是VM和VM之间的信息交互。 修改完Vagrantfile的配置后，记得要用vagrant reload命令来重启VM之后才能使用VM更新后的配置 模拟打造多机器的分布式系统 多机器分布式集群系统模式特别适合以下几种人： 快速建立产品网络的多机器环境，例如web服务器、db服务器 建立一个分布式系统，学习他们是如何交互的 测试API和其他组件的通信 容灾模拟，网络断网、机器死机、连接超时等情况 Vagrant支持单机模拟多台机器，而且支持一个配置文件Vagrntfile就可以跑分布式系统。 现在我们来建立多台VM跑起來，並且让他们之间能够相通信，假设一台是应用服务器、一台是DB服务器，那么这个结构在Vagrant中非常简单，其实和单台的配置差不多，你只需要通过config.vm.define来定义不同的角色就可以了，现在我们打开配置文件进行如下设置： Vagrant.configure(&quot;2&quot;) do |config| config.vm.define :web do |web| web.vm.provider &quot;virtualbox&quot; do |v| v.customize [&quot;modifyvm&quot;, :id, &quot;--name&quot;, &quot;web&quot;, &quot;--memory&quot;, &quot;512&quot;] end web.vm.box = &quot;base&quot; web.vm.hostname = &quot;web&quot; web.vm.network :private_network, ip: &quot;11.11.1.1&quot; end config.vm.define :db do |db| db.vm.provider &quot;virtualbox&quot; do |v| v.customize [&quot;modifyvm&quot;, :id, &quot;--name&quot;, &quot;db&quot;, &quot;--memory&quot;, &quot;512&quot;] end db.vm.box = &quot;base&quot; db.vm.hostname = &quot;db&quot; db.vm.network :private_network, ip: &quot;11.11.1.2&quot; end end 这里的设置和前面我们单机设置配置类似，只是我们使用了:web以及:db分別做了两个VM的设置，并且给每个VM设置了不同的hostname和IP，设置好之后再使用vagrant up将虚拟机跑起来： $ vagrant up Bringing machine &apos;web&apos; up with &apos;virtualbox&apos; provider... Bringing machine &apos;db&apos; up with &apos;virtualbox&apos; provider... [web] Setting the name of the VM... [web] Clearing any previously set forwarded ports... [web] Creating shared folders metadata... [web] Clearing any previously set network interfaces... [web] Preparing network interfaces based on configuration... [web] Forwarding ports... [web] -- 22 =&amp;gt; 2222 (adapter 1) [web] Running any VM customizations... [web] Booting VM... [web] Waiting for VM to boot. This can take a few minutes. [web] VM booted and ready for use! [web] Setting hostname... [web] Configuring and enabling network interfaces... [web] Mounting shared folders... [web] -- /vagrant [db] Setting the name of the VM... [db] Clearing any previously set forwarded ports... [db] Fixed port collision for 22 =&amp;gt; 2222. Now on port 2200. [db] Creating shared folders metadata... [db] Clearing any previously set network interfaces... [db] Preparing network interfaces based on configuration... [db] Forwarding ports... [db] -- 22 =&amp;gt; 2200 (adapter 1) [db] Running any VM customizations... [db] Booting VM... [db] Waiting for VM to boot. This can take a few minutes. [db] VM booted and ready for use! [db] Setting hostname... [db] Configuring and enabling network interfaces... [db] Mounting shared folders... [db] -- /vagrant 看到上面的信息输出后，我们就可以通过vagrant ssh登录虚拟机了，但是这次和上次使用的不一样了，这次我们需要指定相应的角色，用来告诉ssh你期望连接的是哪一台： $ vagrant ssh web vagrant@web:~$ $ vagrant ssh db vagrant@db:~$ 是不是很酷！现在接下来我们再来验证一下虚拟机之间的通信，让我们先使用ssh登录web虚拟机，然后在web虚拟机上使用ssh登录db虚拟机(默认密码是vagrant)： $ vagrant ssh web Linux web 2.6.32-38-server #83-Ubuntu SMP Wed Jan 4 11:26:59 UTC 2012 x86_64 GNU/Linux Ubuntu 10.04.4 LTS Welcome to the Ubuntu Server! * Documentation: http://www.ubuntu.com/server/doc New release &apos;precise&apos; available. Run &apos;do-release-upgrade&apos; to upgrade to it. Welcome to your Vagrant-built virtual machine. Last login: Thu Aug 8 18:55:44 2013 from 10.0.2.2 vagrant@web:~$ ssh 11.11.1.2 The authenticity of host &apos;11.11.1.2 (11.11.1.2)&apos; can&apos;t be established. RSA key fingerprint is e7:8f:07:57:69:08:6e:fa:82:bc:1c:f6:53:3f:12:9e. Are you sure you want to continue connecting (yes/no)? yes Warning: Permanently added &apos;11.11.1.2&apos; (RSA) to the list of known hosts. vagrant@11.11.1.2&apos;s password: Linux db 2.6.32-38-server #83-Ubuntu SMP Wed Jan 4 11:26:59 UTC 2012 x86_64 GNU/Linux Ubuntu 10.04.4 LTS Welcome to the Ubuntu Server! * Documentation: http://www.ubuntu.com/server/doc New release &apos;precise&apos; available. Run &apos;do-release-upgrade&apos; to upgrade to it. Welcome to your Vagrant-built virtual machine. Last login: Thu Aug 8 18:58:50 2013 from 10.0.2.2 vagrant@db:~$ 参考 https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.2.md https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.3.md">
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href=""/>
+
+
+
+
+
+  <title>Vagrant笔记 | Xoinstein</title>
+  
+
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?dc31ae14ba9b9865acc08ef73d4fdb94";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Xoinstein</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+        <li class="menu-item menu-item-love">
+          <a href="https://love.xoinstein.com" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heart"></i> <br />
+            
+            
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+<div id="posts" class="posts-expand">
+  
+  
+
+  
+
+  
+  
+  
+
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="/2019/05/07/vagrant/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xoinstein">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/source/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Xoinstein">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            Vagrant笔记
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-07T00:00:00+08:00">
+                2019-05-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+  
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="vagrant常用命令">Vagrant常用命令</h2>
+
+<h3 id="box-add">Box add</h3>
+
+<p><strong>Command:  vagrant box add ADDRESS</strong></p>
+
+<p>This adds a box with the given address to Vagrant. The address can be one of three things:</p>
+
+<ul>
+  <li>A shorthand name from the <a href="https://vagrantcloud.com/boxes/search">public catalog of available Vagrant images</a>, such as “hashicorp/precise64”.</li>
+  <li>File path or HTTP URL to a box in a <a href="https://vagrantcloud.com/boxes/search">catalog</a>. For HTTP, basic authentication is supported and <code class="highlighter-rouge">http_proxy</code>environmental variables are respected. HTTPS is also supported.</li>
+  <li>URL directly a box file. In this case, you must specify a <code class="highlighter-rouge">--name</code> flag (see below) and versioning/updates will not work.</li>
+</ul>
+
+<p>If an error occurs during the download or the download is interrupted with a Ctrl-C, then Vagrant will attempt to resume the download the next time it is requested. Vagrant will only attempt to resume a download for 24 hours after the initial download.</p>
+
+<h3 id="init">Init</h3>
+
+<p><strong>Command: vagrant init [name [url]]</strong></p>
+
+<p>This initializes the current directory to be a Vagrant environment by creating an initial <a href="https://www.vagrantup.com/docs/vagrantfile/">Vagrantfile</a> if one does not already exist.</p>
+
+<p>If a first argument is given, it will prepopulate the <code class="highlighter-rouge">config.vm.box</code> setting in the created Vagrantfile.</p>
+
+<p>If a second argument is given, it will prepopulate the <code class="highlighter-rouge">config.vm.box_url</code> setting in the created Vagrantfile.</p>
+
+<h3 id="up">Up</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>**Command: vagrant up [name</td>
+      <td>id]**</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This command creates and configures guest machines according to your <a href="https://www.vagrantup.com/docs/vagrantfile/">Vagrantfile</a>.</p>
+
+<p>This is the single most important command in Vagrant, since it is how any Vagrant machine is created. Anyone using Vagrant must use this command on a day-to-day basis.</p>
+
+<h3 id="ssh">Ssh</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>**Command: vagrant ssh [name</td>
+      <td>id] [– extra_ssh_args]**</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This will SSH into a running Vagrant machine and give you access to a shell.</p>
+
+<p>On a simple vagrant project, the instance created will be named default.</p>
+
+<p>Vagrant will ssh into this instance without the instance name.</p>
+
+<h3 id="box-list">Box list</h3>
+
+<p><strong>Command: vagrant box list</strong></p>
+
+<p>This command lists all the boxes that are installed into Vagrant.</p>
+
+<h3 id="box-remove">Box remove</h3>
+
+<p><strong>Command: vagrant box remove NAME</strong></p>
+
+<p>This command removes a box from Vagrant that matches the given name.</p>
+
+<p>If a box has multiple providers, the exact provider must be specified with the <code class="highlighter-rouge">--provider</code> flag. If a box has multiple versions, you can select what versions to delete with the <code class="highlighter-rouge">--box-version</code> flag or remove all versions with the <code class="highlighter-rouge">--all</code> flag.</p>
+
+<h3 id="destroy">Destroy</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>**Command: vagrant destroy [name</td>
+      <td>id]**</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This command stops the running machine Vagrant is managing and destroys all resources that were created during the machine creation process. After running this command, your computer should be left at a clean state, as if you never created the guest machine in the first place.</p>
+
+<p>For linux-based guests, Vagrant uses the <code class="highlighter-rouge">shutdown</code> command to gracefully terminate the machine. Due to the varying nature of operating systems, the <code class="highlighter-rouge">shutdown</code> command may exist at many different locations in the guest’s <code class="highlighter-rouge">$PATH</code>. It is the guest machine’s responsibility to properly populate the <code class="highlighter-rouge">$PATH</code> with directory containing the <code class="highlighter-rouge">shutdown</code> command.</p>
+
+<h3 id="halt">Halt</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>**Command: vagrant halt [name</td>
+      <td>id]**</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This command shuts down the running machine Vagrant is managing.</p>
+
+<p>Vagrant will first attempt to gracefully shut down the machine by running the guest OS shutdown mechanism. If this fails, or if the <code class="highlighter-rouge">--force</code> flag is specified, Vagrant will effectively just shut off power to the machine.</p>
+
+<p>For linux-based guests, Vagrant uses the <code class="highlighter-rouge">shutdown</code> command to gracefully terminate the machine. Due to the varying nature of operating systems, the <code class="highlighter-rouge">shutdown</code> command may exist at many different locations in the guest’s <code class="highlighter-rouge">$PATH</code>. It is the guest machine’s responsibility to properly populate the <code class="highlighter-rouge">$PATH</code> with directory containing the <code class="highlighter-rouge">shutdown</code> command.</p>
+
+<h3 id="package">Package</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>**Command: vagrant package [name</td>
+      <td>id]**</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This packages a currently running <em>VirtualBox</em> or <em>Hyper-V</em> environment into a re-usable <a href="https://www.vagrantup.com/docs/boxes.html">box</a>. This command can only be used with other <a href="https://www.vagrantup.com/docs/providers/">providers</a> based on the provider implementation and if the provider supports it.</p>
+
+<h3 id="plugin">Plugin</h3>
+
+<p><strong>Command: vagrant plugin</strong></p>
+
+<p>This is the command used to manage <a href="https://www.vagrantup.com/docs/plugins/">plugins</a>.</p>
+
+<p>The main functionality of this command is exposed via another level of subcommands:</p>
+
+<ul>
+  <li><a href="https://www.vagrantup.com/docs/cli/plugin.html#plugin-expunge"><code class="highlighter-rouge">expunge</code></a></li>
+  <li><a href="https://www.vagrantup.com/docs/cli/plugin.html#plugin-install"><code class="highlighter-rouge">install</code></a></li>
+  <li><a href="https://www.vagrantup.com/docs/cli/plugin.html#plugin-license"><code class="highlighter-rouge">license</code></a></li>
+  <li><a href="https://www.vagrantup.com/docs/cli/plugin.html#plugin-list"><code class="highlighter-rouge">list</code></a></li>
+  <li><a href="https://www.vagrantup.com/docs/cli/plugin.html#plugin-repair"><code class="highlighter-rouge">repair</code></a></li>
+  <li><a href="https://www.vagrantup.com/docs/cli/plugin.html#plugin-uninstall"><code class="highlighter-rouge">uninstall</code></a></li>
+  <li><a href="https://www.vagrantup.com/docs/cli/plugin.html#plugin-update"><code class="highlighter-rouge">update</code></a></li>
+</ul>
+
+<h3 id="provision">Provision</h3>
+
+<p><strong>Command: vagrant provision [vm-name]</strong></p>
+
+<p>Runs any configured <a href="https://www.vagrantup.com/docs/provisioning/">provisioners</a> against the running Vagrant managed machine.</p>
+
+<p>This command is a great way to quickly test any provisioners, and is especially useful for incremental development of shell scripts, Chef cookbooks, or Puppet modules. You can just make simple modifications to the provisioning scripts on your machine, run a <code class="highlighter-rouge">vagrant provision</code>, and check for the desired results. Rinse and repeat.</p>
+
+<h3 id="reload">Reload</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>**Command: vagrant reload [name</td>
+      <td>id]**</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The equivalent of running a <a href="https://www.vagrantup.com/docs/cli/halt.html">halt</a> followed by an <a href="https://www.vagrantup.com/docs/cli/up.html">up</a>.</p>
+
+<p>This command is usually required for changes made in the Vagrantfile to take effect. After making any modifications to the Vagrantfile, a <code class="highlighter-rouge">reload</code> should be called.</p>
+
+<p>The configured provisioners will not run again, by default. You can force the provisioners to re-run by specifying the <code class="highlighter-rouge">--provision</code> flag.</p>
+
+<h3 id="resume">Resume</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>**Command: vagrant resume [name</td>
+      <td>id]**</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This resumes a Vagrant managed machine that was previously suspended, perhaps with the <a href="https://www.vagrantup.com/docs/cli/suspend.html">suspend command</a>.</p>
+
+<p>The configured provisioners will not run again, by default. You can force the provisioners to re-run by specifying the <code class="highlighter-rouge">--provision</code> flag.</p>
+
+<h3 id="status">Status</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>**Command: vagrant status [name</td>
+      <td>id]**</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This will tell you the state of the machines Vagrant is managing.</p>
+
+<p>It is quite easy, especially once you get comfortable with Vagrant, to forget whether your Vagrant machine is running, suspended, not created, etc. This command tells you the state of the underlying guest machine.</p>
+
+<h3 id="suspend">Suspend</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>**Command: vagrant suspend [name</td>
+      <td>id]**</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>This suspends the guest machine Vagrant is managing, rather than fully <a href="https://www.vagrantup.com/docs/cli/halt.html">shutting it down</a> or <a href="https://www.vagrantup.com/docs/cli/destroy.html">destroying it</a>.</p>
+
+<p>A suspend effectively saves the <em>exact point-in-time state</em> of the machine, so that when you <a href="https://www.vagrantup.com/docs/cli/resume.html">resume</a> it later, it begins running immediately from that point, rather than doing a full boot.</p>
+
+<p>This generally requires extra disk space to store all the contents of the RAM within your guest machine, but the machine no longer consumes the RAM of your host machine or CPU cycles while it is suspended.</p>
+
+<h2 id="vagrantfile配置文件详解">Vagrantfile配置文件详解</h2>
+
+<p>在我们的开发目录下有一个文件<code class="highlighter-rouge">Vagrantfile</code>，里面包含有大量的配置信息，主要包括三个方面的配置，虚拟机的配置、SSH配置、Vagrant的一些基础配置。</p>
+
+<h3 id="box设置">box设置</h3>
+
+<p>config.vm.box = “base”</p>
+
+<p>上面这配置展示了Vagrant要去启用那个box作为系统，也就是上面我们输入<code class="highlighter-rouge">vagrant init Box名称</code>时所指定的box，如果沒有输入box名称的話，那么默认就是<code class="highlighter-rouge">base</code>，VirtualBox提供了VBoxManage这个命令行工具，可以让我们设定VM，用<code class="highlighter-rouge">modifyvm</code>这个命令让我们可以设定VM的名称和内存大小等等，这里说的名称指的是在VirtualBox中显示的名称，我们也可以在Vagrantfile中进行设定，在Vagrantfile中加入如下这行就可以设定了：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>config.vm.provider "virtualbox" do |v|
+  v.customize ["modifyvm", :id, "--name", "astaxie", "--memory", "512"]
+end
+</code></pre></div></div>
+
+<p>这行设置的意思是调用VBoxManage的<code class="highlighter-rouge">modifyvm</code>的命令，设置VM的名称为<code class="highlighter-rouge">astaxie</code>，内存为512MB。你可以类似的通过定制其它VM属性来定制你自己的VM。</p>
+
+<h3 id="网络设置">网络设置</h3>
+
+<p>Vagrant有两种方式来进行网络连接，一种是host-only(主机模式)，意思是主机和虚拟机之间的网络互访，而不是虚拟机访问internet的技术，也就是只有你一個人自High，其他人访问不到你的虚拟机。另一种是Bridge(桥接模式)，该模式下的VM就像是局域网中的一台独立的主机，也就是说需要VM到你的路由器要IP，这样的话局域网里面其他机器就可以访问它了，一般我们设置虚拟机都是自high为主，所以我们的设置一般如下：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>config.vm.network :private_network, ip: "11.11.11.11"
+</code></pre></div></div>
+
+<p>这里我们虚拟机设置为hostonly，并且指定了一个IP，IP的话建议最好不要用<code class="highlighter-rouge">192.168..</code>这个网段，因为很有可能和你局域网里面的其它机器IP冲突，所以最好使用类似<code class="highlighter-rouge">11.11..</code>这样的IP地址。</p>
+
+<h3 id="hostname设置">hostname设置</h3>
+
+<p><code class="highlighter-rouge">hostname</code>的设置非常简单，Vagrantfile中加入下面这行就可以了：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>config.vm.hostname = "go-app"
+</code></pre></div></div>
+
+<p>设置<code class="highlighter-rouge">hostname</code>非常重要，因为当我们有很多台虚拟服务器的时候，都是依靠<code class="highlighter-rouge">hostname</code>來做识别的，例如Puppet或是Chef，都是通过<code class="highlighter-rouge">hostname</code>來做识别的，既然设置那么简单，所以我们就別偷懒，设置一个。</p>
+
+<h3 id="同步目录">同步目录</h3>
+
+<p>我们上面介绍过<code class="highlighter-rouge">/vagrant</code>目录默认就是当前的开发目录，这是在虚拟机开启的时候默认挂载同步的。我们还可以通过配置来设置额外的同步目录：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>config.vm.synced_folder  "/Users/astaxie/data", "/vagrant_data"
+</code></pre></div></div>
+
+<p>上面这个设定，第一个参数是主机的目录，第二个参数是虚拟机挂载的目录</p>
+
+<h3 id="端口转发">端口转发</h3>
+
+<p>config.vm.network :forwarded_port, guest: 80, host: 8080</p>
+
+<p>上面这句配置可厉害了，这一行的意思是把对host机器上8080端口的访问请求forward到虚拟机的80端口的服务上，例如你在你的虚拟机上使用nginx跑了一个Go应用，那么你在host机器上的浏览器中打开<code class="highlighter-rouge">http://localhost:8080</code>时，Vagrant就会把这个请求转发到VM里面跑在80端口的nginx服务上，因此我们可以通过这个设置来帮助我们去设定host和VM之间，或是VM和VM之间的信息交互。</p>
+
+<blockquote>
+  <p>修改完Vagrantfile的配置后，记得要用<code class="highlighter-rouge">vagrant reload</code>命令来重启VM之后才能使用VM更新后的配置</p>
+</blockquote>
+
+<h2 id="模拟打造多机器的分布式系统">模拟打造多机器的分布式系统</h2>
+<p>多机器分布式集群系统模式特别适合以下几种人：</p>
+
+<ol>
+  <li>快速建立产品网络的多机器环境，例如web服务器、db服务器</li>
+  <li>建立一个分布式系统，学习他们是如何交互的</li>
+  <li>测试API和其他组件的通信</li>
+  <li>容灾模拟，网络断网、机器死机、连接超时等情况</li>
+</ol>
+
+<p>Vagrant支持单机模拟多台机器，而且支持一个配置文件Vagrntfile就可以跑分布式系统。</p>
+
+<p>现在我们来建立多台VM跑起來，並且让他们之间能够相通信，假设一台是应用服务器、一台是DB服务器，那么这个结构在Vagrant中非常简单，其实和单台的配置差不多，你只需要通过<code class="highlighter-rouge">config.vm.define</code>来定义不同的角色就可以了，现在我们打开配置文件进行如下设置：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure("2") do |config|
+  config.vm.define :web do |web|
+    web.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "web", "--memory", "512"]
+    end
+    web.vm.box = "base"
+    web.vm.hostname = "web"
+    web.vm.network :private_network, ip: "11.11.1.1"
+  end
+
+  config.vm.define :db do |db|
+    db.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "db", "--memory", "512"]
+    end
+    db.vm.box = "base"
+    db.vm.hostname = "db"
+    db.vm.network :private_network, ip: "11.11.1.2"
+  end
+end
+</code></pre></div></div>
+
+<p>这里的设置和前面我们单机设置配置类似，只是我们使用了<code class="highlighter-rouge">:web</code>以及<code class="highlighter-rouge">:db</code>分別做了两个VM的设置，并且给每个VM设置了不同的<code class="highlighter-rouge">hostname</code>和IP，设置好之后再使用<code class="highlighter-rouge">vagrant up</code>将虚拟机跑起来：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ vagrant up
+Bringing machine 'web' up with 'virtualbox' provider...
+Bringing machine 'db' up with 'virtualbox' provider...
+[web] Setting the name of the VM...
+[web] Clearing any previously set forwarded ports...
+[web] Creating shared folders metadata...
+[web] Clearing any previously set network interfaces...
+[web] Preparing network interfaces based on configuration...
+[web] Forwarding ports...
+[web] -- 22 =&gt; 2222 (adapter 1)
+[web] Running any VM customizations...
+[web] Booting VM...
+[web] Waiting for VM to boot. This can take a few minutes.
+[web] VM booted and ready for use!
+[web] Setting hostname...
+[web] Configuring and enabling network interfaces...
+[web] Mounting shared folders...
+[web] -- /vagrant
+[db] Setting the name of the VM...
+[db] Clearing any previously set forwarded ports...
+[db] Fixed port collision for 22 =&gt; 2222. Now on port 2200.
+[db] Creating shared folders metadata...
+[db] Clearing any previously set network interfaces...
+[db] Preparing network interfaces based on configuration...
+[db] Forwarding ports...
+[db] -- 22 =&gt; 2200 (adapter 1)
+[db] Running any VM customizations...
+[db] Booting VM...
+[db] Waiting for VM to boot. This can take a few minutes.
+[db] VM booted and ready for use!
+[db] Setting hostname...
+[db] Configuring and enabling network interfaces...
+[db] Mounting shared folders...
+[db] -- /vagrant
+</code></pre></div></div>
+
+<p>看到上面的信息输出后，我们就可以通过<code class="highlighter-rouge">vagrant ssh</code>登录虚拟机了，但是这次和上次使用的不一样了，这次我们需要指定相应的角色，用来告诉ssh你期望连接的是哪一台：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ vagrant ssh web
+vagrant@web:~$
+
+$ vagrant ssh db
+vagrant@db:~$
+</code></pre></div></div>
+
+<p>是不是很酷！现在接下来我们再来验证一下虚拟机之间的通信，让我们先使用ssh登录web虚拟机，然后在web虚拟机上使用ssh登录db虚拟机(默认密码是<code class="highlighter-rouge">vagrant</code>)：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ vagrant ssh web
+Linux web 2.6.32-38-server #83-Ubuntu SMP Wed Jan 4 11:26:59 UTC 2012 x86_64 GNU/Linux
+Ubuntu 10.04.4 LTS
+
+Welcome to the Ubuntu Server!
+ * Documentation:  http://www.ubuntu.com/server/doc
+New release 'precise' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+Welcome to your Vagrant-built virtual machine.
+Last login: Thu Aug  8 18:55:44 2013 from 10.0.2.2
+vagrant@web:~$ ssh 11.11.1.2
+The authenticity of host '11.11.1.2 (11.11.1.2)' can't be established.
+RSA key fingerprint is e7:8f:07:57:69:08:6e:fa:82:bc:1c:f6:53:3f:12:9e.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '11.11.1.2' (RSA) to the list of known hosts.
+vagrant@11.11.1.2's password:
+Linux db 2.6.32-38-server #83-Ubuntu SMP Wed Jan 4 11:26:59 UTC 2012 x86_64 GNU/Linux
+Ubuntu 10.04.4 LTS
+
+Welcome to the Ubuntu Server!
+ * Documentation:  http://www.ubuntu.com/server/doc
+New release 'precise' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+Welcome to your Vagrant-built virtual machine.
+Last login: Thu Aug  8 18:58:50 2013 from 10.0.2.2
+vagrant@db:~$
+</code></pre></div></div>
+
+<blockquote>
+  <p>参考</p>
+
+  <p><a href="https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.2.md">https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.2.md</a></p>
+
+  <p><a href="https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.3.md">https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.3.md</a></p>
+</blockquote>
+
+
+      
+    </div>
+  
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/source/images/wechat-reward.jpeg" alt="xoinstein WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/source/images/alipay-reward.jpeg" alt="xoinstein Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            
+            <a href="/tag/#/blog" rel="tag"># blog</a>
+          
+        </div>
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/07/tempnam/" rel="prev" title="PHP中tempnam函数dir参数不可访问却取系统tmp目录">
+                PHP中tempnam函数dir参数不可访问却取系统tmp目录 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+    
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
+</div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/source/images/avatar.png"
+               alt="xoinstein" />
+          <p class="site-author-name" itemprop="name">xoinstein</p>
+           
+              <p class="site-description motion-element" itemprop="description">🐒</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+
+
+
+
+            
+              <div class="post-toc-content">
+    <ol class=nav>
+      <li class="nav-item nav-level-2"> <a class="nav-link" href="#vagrant常用命令"> <span class="nav-number">1</span> <span class="nav-text">Vagrant常用命令</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-3"> <a class="nav-link" href="#box-add"> <span class="nav-number">1.1</span> <span class="nav-text">Box add</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#init"> <span class="nav-number">1.2</span> <span class="nav-text">Init</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#up"> <span class="nav-number">1.3</span> <span class="nav-text">Up</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#ssh"> <span class="nav-number">1.4</span> <span class="nav-text">Ssh</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#box-list"> <span class="nav-number">1.5</span> <span class="nav-text">Box list</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#box-remove"> <span class="nav-number">1.6</span> <span class="nav-text">Box remove</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#destroy"> <span class="nav-number">1.7</span> <span class="nav-text">Destroy</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#halt"> <span class="nav-number">1.8</span> <span class="nav-text">Halt</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#package"> <span class="nav-number">1.9</span> <span class="nav-text">Package</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#plugin"> <span class="nav-number">1.10</span> <span class="nav-text">Plugin</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#provision"> <span class="nav-number">1.11</span> <span class="nav-text">Provision</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#reload"> <span class="nav-number">1.12</span> <span class="nav-text">Reload</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#resume"> <span class="nav-number">1.13</span> <span class="nav-text">Resume</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#status"> <span class="nav-number">1.14</span> <span class="nav-text">Status</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#suspend"> <span class="nav-number">1.15</span> <span class="nav-text">Suspend</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#vagrantfile配置文件详解"> <span class="nav-number">2</span> <span class="nav-text">Vagrantfile配置文件详解</span> </a> <ol class="nav-child"> <li class="nav-item nav-level-3"> <a class="nav-link" href="#box设置"> <span class="nav-number">2.1</span> <span class="nav-text">box设置</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#网络设置"> <span class="nav-number">2.2</span> <span class="nav-text">网络设置</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#hostname设置"> <span class="nav-number">2.3</span> <span class="nav-text">hostname设置</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#同步目录"> <span class="nav-number">2.4</span> <span class="nav-text">同步目录</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-3"> <a class="nav-link" href="#端口转发"> <span class="nav-number">2.5</span> <span class="nav-text">端口转发</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> </li></ol> </li></ol> </li></ol> </li></ol> </li> <li class="nav-item nav-level-2"> <a class="nav-link" href="#模拟打造多机器的分布式系统"> <span class="nav-number">3</span> <span class="nav-text">模拟打造多机器的分布式系统</span> </a> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child"> <ol class="nav-child">
+    </ol>
+  </div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xoinstein</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://jekyllrb.com">Jekyll</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/simpleyyt/jekyll-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+   
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  
+  
+  
+  
+  <script type="text/javascript" src="/assets/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/assets/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/assets/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/assets/js/src/post-details.js?v=5.1.1"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/assets/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+    
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
+
