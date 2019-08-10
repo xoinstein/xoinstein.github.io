@@ -324,17 +324,13 @@ The user specified as a definer ('user_xxx'@'') does not exist
 
 5) vi ~/.ssh/config 添加以下代码：
 
- Host xoinstein.com
-
+ Host ali-xo
+ 		HostName xoinstein.com
     AddKeysToAgent yes
-
     UseKeychain yes
-
     IdentityFile ~/.ssh/ecs/xoinstein.com
 
-6) alias ssh-xo=’ssh -p 22 root@xoinstein.com’ 添加到~/.bashrc 或 ~/.profile
-
-7) ssh-xo登陆服务器
+6) ssh ali-xo登陆服务器
 </content>
       <categories>
         
