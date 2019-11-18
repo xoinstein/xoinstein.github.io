@@ -83,7 +83,7 @@
 <link href="/assets/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="xoinstein 陈真 " />
+  <meta name="keywords" content="blog," />
 
 
 
@@ -109,17 +109,17 @@
 
 
 
-<meta name="description" content="🐒">
-<meta name="keywords" content="xoinstein 陈真 ">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Xoinstein">
-<meta property="og:url" content="/categories/">
+<meta name="description" content="之前都是申请阿里云的免费证书，一年有效期，到期之后又得申请、下载、部署，有点麻烦。搜了下“自动申请ssl”找到了acme.sh这个项目，很方便，文档也很详细。 简单记录下初次使用过程: # 安装acme.sh curl https://get.acme.sh | sh source .bashrc # 生成证书(阿里云dns验证方式) ## 阿里云账户 export Ali_Key=&quot;sdfsdfsdfljlbjkljlkjsdfoiwje&quot; export Ali_Secret=&quot;jlsdflanljkljlfdsaklkjflsa&quot; acme.sh --issue --dns dns_ali -d xoinstein.com # copy/安装 证书 ## 修改ssl配置 vi /etc/nginx/sites-available/xoinstein.conf ssl_certificate cert/fullchain.cer; ssl_certificate_key cert/xoinstein.key; acme.sh --installcert -d xoinstein.com \ --key-file /etc/nginx/cert/xoinstein.key \ --fullchain-file /etc/nginx/cert/fullchain.cer \ --reloadcmd &quot;service nginx force-reload&quot; # 更新证书 (自动更新? 待验证)">
+<meta name="keywords" content="blog">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用acme.sh从letsencrypt生成免费ssl证书并自动更新">
+<meta property="og:url" content="/2019/11/18/acme.sh/">
 <meta property="og:site_name" content="Xoinstein">
-<meta property="og:description" content="🐒">
+<meta property="og:description" content="之前都是申请阿里云的免费证书，一年有效期，到期之后又得申请、下载、部署，有点麻烦。搜了下“自动申请ssl”找到了acme.sh这个项目，很方便，文档也很详细。 简单记录下初次使用过程: # 安装acme.sh curl https://get.acme.sh | sh source .bashrc # 生成证书(阿里云dns验证方式) ## 阿里云账户 export Ali_Key=&quot;sdfsdfsdfljlbjkljlkjsdfoiwje&quot; export Ali_Secret=&quot;jlsdflanljkljlfdsaklkjflsa&quot; acme.sh --issue --dns dns_ali -d xoinstein.com # copy/安装 证书 ## 修改ssl配置 vi /etc/nginx/sites-available/xoinstein.conf ssl_certificate cert/fullchain.cer; ssl_certificate_key cert/xoinstein.key; acme.sh --installcert -d xoinstein.com \ --key-file /etc/nginx/cert/xoinstein.key \ --fullchain-file /etc/nginx/cert/fullchain.cer \ --reloadcmd &quot;service nginx force-reload&quot; # 更新证书 (自动更新? 待验证)">
 <meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Xoinstein">
-<meta name="twitter:description" content="🐒">
+<meta name="twitter:title" content="使用acme.sh从letsencrypt生成免费ssl证书并自动更新">
+<meta name="twitter:description" content="之前都是申请阿里云的免费证书，一年有效期，到期之后又得申请、下载、部署，有点麻烦。搜了下“自动申请ssl”找到了acme.sh这个项目，很方便，文档也很详细。 简单记录下初次使用过程: # 安装acme.sh curl https://get.acme.sh | sh source .bashrc # 生成证书(阿里云dns验证方式) ## 阿里云账户 export Ali_Key=&quot;sdfsdfsdfljlbjkljlkjsdfoiwje&quot; export Ali_Secret=&quot;jlsdflanljkljlfdsaklkjflsa&quot; acme.sh --issue --dns dns_ali -d xoinstein.com # copy/安装 证书 ## 修改ssl配置 vi /etc/nginx/sites-available/xoinstein.conf ssl_certificate cert/fullchain.cer; ssl_certificate_key cert/xoinstein.key; acme.sh --installcert -d xoinstein.com \ --key-file /etc/nginx/cert/xoinstein.key \ --fullchain-file /etc/nginx/cert/fullchain.cer \ --reloadcmd &quot;service nginx force-reload&quot; # 更新证书 (自动更新? 待验证)">
 
 
 <script type="text/javascript" id="hexo.configurations">
@@ -152,7 +152,7 @@
 
 
 
-  <title>              分类 | Xoinstein      </title>
+  <title>使用acme.sh从letsencrypt生成免费ssl证书并自动更新 | Xoinstein</title>
   
 
 
@@ -288,39 +288,216 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
+
 <div id="posts" class="posts-expand">
-<header class="post-header">
+  
+  
 
-	<h1 class="post-title" itemprop="name headline">
-    
-      分类
-    
-  </h1>
-
-
-
-</header>
+  
 
   
   
-    <div class="category-all-page">
-      <div class="category-all-title">
-          
-            暂无分类
-          
-      </div>
-      <div class="category-all">
-        
+  
 
+  <article class="post post-type- " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="/2019/11/18/acme.sh/">
 
-        
-  <ul class="category-list">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xoinstein">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/source/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Xoinstein">
+    </span>
+
     
-  </ul>
+      <header class="post-header">
 
-      </div>
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+          
+          
+            使用acme.sh从letsencrypt生成免费ssl证书并自动更新
+          
+        </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-18T00:00:00+08:00">
+                2019-11-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+            
+                <div class="post-description">
+                    
+                </div>
+            
+          
+
+        </div>
+      </header>
+    
+  
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>之前都是申请阿里云的免费证书，一年有效期，到期之后又得申请、下载、部署，有点麻烦。搜了下“自动申请ssl”找到了<a href="https://github.com/Neilpang/acme.sh">acme.sh</a>这个项目，很方便，文档也很详细。</p>
+
+<p>简单记录下初次使用过程:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 安装acme.sh</span>
+curl https://get.acme.sh | sh 
+
+<span class="nb">source</span> .bashrc
+
+<span class="c"># 生成证书(阿里云dns验证方式)</span>
+<span class="c">## 阿里云账户</span>
+<span class="nb">export </span><span class="nv">Ali_Key</span><span class="o">=</span><span class="s2">"sdfsdfsdfljlbjkljlkjsdfoiwje"</span>
+<span class="nb">export </span><span class="nv">Ali_Secret</span><span class="o">=</span><span class="s2">"jlsdflanljkljlfdsaklkjflsa"</span>
+
+acme.sh <span class="nt">--issue</span> <span class="nt">--dns</span> dns_ali <span class="nt">-d</span> xoinstein.com
+
+<span class="c"># copy/安装 证书</span>
+<span class="c">## 修改ssl配置</span>
+vi /etc/nginx/sites-available/xoinstein.conf
+
+    ssl_certificate   cert/fullchain.cer<span class="p">;</span>
+    ssl_certificate_key  cert/xoinstein.key<span class="p">;</span>
+
+acme.sh <span class="nt">--installcert</span> <span class="nt">-d</span> xoinstein.com <span class="se">\</span>
+				<span class="nt">--key-file</span> /etc/nginx/cert/xoinstein.key <span class="se">\</span>
+				<span class="nt">--fullchain-file</span> /etc/nginx/cert/fullchain.cer <span class="se">\</span>
+				<span class="nt">--reloadcmd</span> <span class="s2">"service nginx force-reload"</span>
+
+
+<span class="c"># 更新证书 (自动更新? 待验证)</span>
+
+
+</code></pre></div></div>
+
+      
     </div>
   
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/source/images/wechat-reward.jpeg" alt="xoinstein WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/source/images/alipay-reward.jpeg" alt="xoinstein Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            
+            <a href="/tag/#/blog" rel="tag"># blog</a>
+          
+        </div>
+      
+
+      
+      
+      
+      
+      
+
+      
+      
+        <div class="post-nav" id="post-nav-id">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/09/kindle-personal-document-service/" rel="prev" title="Kindle个人文档服务">
+                Kindle个人文档服务 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+      
+
+      
+    </footer>
+    
+  </article>
+
+  <div class="post-spread">
+    
+  </div>
 </div>
 
 
@@ -329,6 +506,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -344,6 +525,14 @@
 
   <aside id="sidebar" class="sidebar">
     <div class="sidebar-inner">
+
+      
+        
+        
+        
+
+
+
 
       
 

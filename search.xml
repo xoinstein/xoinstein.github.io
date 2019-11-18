@@ -2,6 +2,54 @@
 <search>
   
     <entry>
+      <title>使用acme.sh从letsencrypt生成免费ssl证书并自动更新</title>
+      <url>/2019/11/18/acme.sh/</url>
+      <content type="text">之前都是申请阿里云的免费证书，一年有效期，到期之后又得申请、下载、部署，有点麻烦。搜了下“自动申请ssl”找到了acme.sh这个项目，很方便，文档也很详细。
+
+简单记录下初次使用过程:
+
+# 安装acme.sh
+curl https://get.acme.sh | sh 
+
+source .bashrc
+
+# 生成证书(阿里云dns验证方式)
+## 阿里云账户
+export Ali_Key=&quot;sdfsdfsdfljlbjkljlkjsdfoiwje&quot;
+export Ali_Secret=&quot;jlsdflanljkljlfdsaklkjflsa&quot;
+
+acme.sh --issue --dns dns_ali -d xoinstein.com
+
+# copy/安装 证书
+## 修改ssl配置
+vi /etc/nginx/sites-available/xoinstein.conf
+
+    ssl_certificate   cert/fullchain.cer;
+    ssl_certificate_key  cert/xoinstein.key;
+
+acme.sh --installcert -d xoinstein.com \
+				--key-file /etc/nginx/cert/xoinstein.key \
+				--fullchain-file /etc/nginx/cert/fullchain.cer \
+				--reloadcmd &quot;service nginx force-reload&quot;
+
+
+# 更新证书 (自动更新? 待验证)
+
+
+
+</content>
+      <categories>
+        
+      </categories>
+      <tags>
+        
+          <tag> blog </tag>
+        
+      </tags>
+      <tags></tags>
+    </entry>
+  
+    <entry>
       <title>Kindle个人文档服务</title>
       <url>/2019/08/09/kindle-personal-document-service/</url>
       <content type="text">介绍
