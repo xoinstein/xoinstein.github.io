@@ -399,9 +399,9 @@ vi /etc/nginx/sites-available/xoinstein.conf
     ssl_certificate_key  cert/xoinstein.key<span class="p">;</span>
 
 acme.sh <span class="nt">--installcert</span> <span class="nt">-d</span> xoinstein.com <span class="se">\</span>
-				<span class="nt">--key-file</span> /etc/nginx/cert/xoinstein.key <span class="se">\</span>
-				<span class="nt">--fullchain-file</span> /etc/nginx/cert/fullchain.cer <span class="se">\</span>
-				<span class="nt">--reloadcmd</span> <span class="s2">"service nginx force-reload"</span>
+	<span class="nt">--key-file</span> /etc/nginx/cert/xoinstein.key <span class="se">\</span>
+	<span class="nt">--fullchain-file</span> /etc/nginx/cert/fullchain.cer <span class="se">\</span>
+	<span class="nt">--reloadcmd</span> <span class="s2">"service nginx force-reload"</span>
 
 
 <span class="c"># 更新证书 (自动更新? 待验证)</span>
